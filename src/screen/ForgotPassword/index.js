@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import tiket from '../../assets/Vector.png';
 
-function Forgotpassword(props) {
+function ForgotPassword(props) {
   const handleLogin = () => {
     // props.navigation.navigate('AppScreen', {
     //   screen: 'Home',
@@ -77,4 +77,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Forgotpassword;
+export default ForgotPassword;

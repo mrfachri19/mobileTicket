@@ -7,6 +7,7 @@ import {
   Image,
   SafeAreaView,
   TextInput,
+  TouchableOpacity,
 } from 'react-native';
 import tiket from '../../assets/Vector.png';
 
@@ -17,6 +18,11 @@ function Login(props) {
       params: {
         nama: 'Bagus TH',
       },
+    });
+  };
+  const handleForgotPassword = () => {
+    props.navigation.navigate('AppScreen', {
+      screen: 'ForgotPassword',
     });
   };
 
@@ -46,6 +52,25 @@ function Login(props) {
           <Button title="Login" color="#5F2EEA" onPress={handleLogin} />
         </View>
       </SafeAreaView>
+      <View
+        // eslint-disable-next-line react-native/no-inline-styles
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          flex: 1,
+          flexWrap: 'wrap',
+          margin: 10,
+        }}>
+        <Text>Forgot Your Password </Text>
+        <TouchableOpacity>
+          <Text
+            // eslint-disable-next-line react-native/no-inline-styles
+            style={{color: 'blue'}}
+            onpress={handleForgotPassword}>
+            Reset Now
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -80,7 +105,7 @@ const styles = StyleSheet.create({
   },
   btn: {
     marginTop: 40,
-    width: 327,
+    width: 320,
     height: 64,
   },
 });
