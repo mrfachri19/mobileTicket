@@ -25,14 +25,17 @@ function ForgotPassword(props) {
     <View style={styles.container}>
       <Image source={tiket} />
       <Text style={styles.font}>Forgot Password</Text>
+      <Text style={styles.fontdescription}>
+        we'll send a link to your email shortly
+      </Text>
       <SafeAreaView>
         <Text style={styles.email}>Email</Text>
         <TextInput
           style={styles.input}
           onChangeText={onChangeNumber}
           value={number}
-          placeholder="Enter Phone Number"
-          keyboardType="numeric"
+          placeholder="Enter your Email"
+          keyboardType="text"
         />
         <View style={styles.btn}>
           <Button title="Active Now" color="#5F2EEA" onPress={handleLogin} />
@@ -47,11 +50,17 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 54,
     paddingLeft: 24,
+    backgroundColor: 'white',
   },
   font: {
     fontSize: 26,
     marginTop: 46,
     color: '#121212',
+  },
+  fontdescription: {
+    marginTop: 10,
+    fontSize: 15,
+    color: '#8692A6',
   },
   email: {
     fontSize: 16,
@@ -72,7 +81,7 @@ const styles = StyleSheet.create({
   },
   btn: {
     marginTop: 40,
-    width: 327,
+    width: 320,
     height: 64,
   },
 });

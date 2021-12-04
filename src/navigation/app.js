@@ -7,6 +7,7 @@ const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
 import Home from '../screen/Home';
+import MovieDetail from '../screen/MovieDetail';
 import Profile from '../screen/Profile';
 
 import DrawerContent from '../components/DrawerContent';
@@ -17,6 +18,11 @@ function HomeNavigator() {
       <Stack.Screen
         component={Home}
         name="Home"
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        component={MovieDetail}
+        name="MovieDetail"
         options={{headerShown: false}}
       />
     </Stack.Navigator>

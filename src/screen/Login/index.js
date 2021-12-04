@@ -21,12 +21,14 @@ function Login(props) {
     });
   };
   const handleForgotPassword = () => {
-    props.navigation.navigate('AppScreen', {
-      screen: 'ForgotPassword',
-    });
+    props.navigation.navigate('ForgotPassword');
+  };
+  const handleRegister = () => {
+    props.navigation.navigate('Register');
   };
 
-  const [number, onChangeNumber] = React.useState(null);
+  const [text, onChangeText] = React.useState(null);
+  const [password, onChangePassword] = React.useState(null);
   return (
     <View style={styles.container}>
       <Image source={tiket} />
@@ -35,25 +37,24 @@ function Login(props) {
         <Text style={styles.email}>Email</Text>
         <TextInput
           style={styles.input}
-          onChangeText={onChangeNumber}
-          value={number}
-          placeholder="Enter Phone Number"
-          keyboardType="numeric"
+          onChangeText={onChangeText}
+          value={text}
+          placeholder="Enter Email"
+          keyboardType="text"
         />
         <Text style={styles.password}>Password</Text>
         <TextInput
           style={styles.input}
-          onChangeText={onChangeNumber}
-          value={number}
+          onChangeText={onChangePassword}
+          value={password}
           placeholder="Enter Password"
-          keyboardType="numeric"
+          keyboardType="text"
         />
         <View style={styles.btn}>
-          <Button title="Login" color="#5F2EEA" onPress={handleLogin} />
+          <Button title="Sign In" color="#5F2EEA" onPress={handleLogin} />
         </View>
       </SafeAreaView>
       <View
-        // eslint-disable-next-line react-native/no-inline-styles
         style={{
           display: 'flex',
           flexDirection: 'row',
@@ -63,11 +64,14 @@ function Login(props) {
         }}>
         <Text>Forgot Your Password </Text>
         <TouchableOpacity>
-          <Text
-            // eslint-disable-next-line react-native/no-inline-styles
-            style={{color: 'blue'}}
-            onpress={handleForgotPassword}>
+          <Text style={{color: 'blue'}} onPress={handleForgotPassword}>
             Reset Now
+          </Text>
+        </TouchableOpacity>
+        <Text style={{marginTop: 10}}>Dont have any account </Text>
+        <TouchableOpacity>
+          <Text style={{color: 'blue', marginTop: 10}} onPress={handleRegister}>
+            Please Register
           </Text>
         </TouchableOpacity>
       </View>
@@ -80,6 +84,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 54,
     paddingLeft: 24,
+    backgroundColor: 'white',
   },
   font: {
     fontSize: 26,

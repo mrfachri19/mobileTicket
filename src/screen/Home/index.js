@@ -23,6 +23,9 @@ function Home(props) {
   const onPressTitle = () => {
     setTitleText("Bird's Nest [pressed]");
   };
+  const handleMovieDetail = () => {
+    props.navigation.navigate('MovieDetail');
+  };
 
   const [text, onChangeText] = React.useState('Useless Text');
 
@@ -96,7 +99,9 @@ function Home(props) {
               <Text style={styles.title}>Black Widow</Text>
               <Text style={styles.tagline}>Action, Romance, Comedy</Text>
               <TouchableHighlight style={styles.buttondetail}>
-                <Text style={styles.textdetail}>Detail</Text>
+                <Text style={styles.textdetail} onPress={handleMovieDetail}>
+                  Detail
+                </Text>
               </TouchableHighlight>
             </View>
             <View style={styles.border}>
@@ -171,6 +176,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 54,
     padding: 24,
+    backgroundColor: '#FFFFFF',
   },
   baseText: {
     fontFamily: 'Cochin',
