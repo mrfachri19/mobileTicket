@@ -14,6 +14,14 @@ import gpay from '../../assets/gpay.png';
 import visa from '../../assets/visa.png';
 import dana from '../../assets/dana.png';
 import paypal from '../../assets/paypal.png';
+import tikit from '../../assets/tiket.png';
+import ebu from '../../assets/ebu.png';
+import hiflix from '../../assets/hiflix.png';
+import cinema from '../../assets/cineone.png';
+import yt from '../../assets/yt.png';
+import ig from '../../assets/ig.png';
+import fb from '../../assets/fb.png';
+import twit from '../../assets/twit.png';
 
 function Order() {
   const [text, onChangeText] = React.useState('Jon Don Bosco');
@@ -37,8 +45,8 @@ function Order() {
         </Text>
         <Text style={{fontSize: 20, color: '#14142B'}}>$30.00</Text>
       </View>
-      <View style={styles.container}>
-        <ScrollView style={styles.scrollView}>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.container}>
           <Text style={{marginTop: 40, fontSize: 18, color: '#14142B'}}>
             Payment Method
           </Text>
@@ -160,8 +168,76 @@ function Order() {
               Pay Your Order
             </Text>
           </TouchableOpacity>
-        </ScrollView>
-      </View>
+        </View>
+        <View
+          style={{backgroundColor: 'white', paddingTop: 75, paddingLeft: 24}}>
+          <Image source={tikit} />
+          <Text style={{fontSize: 14, color: '#6E7191', marginTop: 15}}>
+            Stop waiting in line. Buy tickets {'\n'}conveniently, watch movies
+            quietly.
+          </Text>
+          <Text style={{fontSize: 14, color: '#000000', marginTop: 15}}>
+            Explore
+          </Text>
+          <View style={{flexDirection: 'row'}}>
+            <Text
+              style={{
+                fontSize: 14,
+                color: '#6E7191',
+                marginTop: 15,
+                flex: 3,
+              }}>
+              Cinemast
+            </Text>
+            <Text
+              style={{
+                fontSize: 14,
+                color: '#6E7191',
+                marginTop: 15,
+                flex: 3,
+              }}>
+              Movie List
+            </Text>
+            <Text
+              style={{
+                fontSize: 14,
+                color: '#6E7191',
+                marginTop: 15,
+                flex: 3,
+              }}>
+              Notification
+            </Text>
+          </View>
+          <Text
+            style={{
+              fontSize: 14,
+              color: '#6E7191',
+              marginTop: 15,
+            }}>
+            My Ticket
+          </Text>
+          <Text style={{fontSize: 14, color: '#000000', marginTop: 45}}>
+            Our Sponsore
+          </Text>
+          <View style={{flexDirection: 'row', marginTop: 16}}>
+            <Image style={{marginRight: 24}} source={ebu} />
+            <Image style={{marginRight: 24}} source={hiflix} />
+            <Image style={{marginRight: 24}} source={cinema} />
+          </View>
+          <Text style={{fontSize: 14, color: '#000000', marginTop: 45}}>
+            Follow Us
+          </Text>
+          <View style={{flexDirection: 'row', marginTop: 16}}>
+            <Image style={{marginRight: 41}} source={yt} />
+            <Image style={{marginRight: 41}} source={fb} />
+            <Image style={{marginRight: 41}} source={twit} />
+            <Image style={{marginRight: 41}} source={ig} />
+          </View>
+          <Text style={{fontSize: 13, color: '#6E7191', marginVertical: 64}}>
+            © 2020 Tickitz. All Rights Reserved.
+          </Text>
+        </View>
+      </ScrollView>
     </>
   );
 }

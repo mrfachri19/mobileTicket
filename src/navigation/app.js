@@ -11,6 +11,7 @@ import MovieDetail from '../screen/MovieDetail';
 import Order from '../screen/Order';
 import Payment from '../screen/Payment';
 import Profile from '../screen/Profile';
+import OrderHistory from '../screen/OrderHistory';
 
 import DrawerContent from '../components/DrawerContent';
 
@@ -42,6 +43,11 @@ function ProfileNavigator() {
       <Stack.Screen
         component={Profile}
         name="Profile"
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        component={OrderHistory}
+        name="OrderHistory"
         options={{headerShown: false}}
       />
     </Stack.Navigator>
