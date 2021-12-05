@@ -10,6 +10,7 @@ import Home from '../screen/Home';
 import MovieDetail from '../screen/MovieDetail';
 import Order from '../screen/Order';
 import Payment from '../screen/Payment';
+import TicketResult from '../screen/TicketResult';
 import Profile from '../screen/Profile';
 import OrderHistory from '../screen/OrderHistory';
 
@@ -60,6 +61,11 @@ function PaymentNavigator() {
       <Stack.Screen
         component={Payment}
         name="Payment"
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        component={TicketResult}
+        name="TicketResult"
         options={{headerShown: false}}
       />
     </Stack.Navigator>

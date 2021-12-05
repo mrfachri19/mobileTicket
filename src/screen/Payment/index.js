@@ -23,12 +23,15 @@ import ig from '../../assets/ig.png';
 import fb from '../../assets/fb.png';
 import twit from '../../assets/twit.png';
 
-function Order() {
+function Payment(props) {
   const [text, onChangeText] = React.useState('Jon Don Bosco');
   const [email, onChangeEmail] = React.useState(
     'jondonpablopatricio@gmail.com',
   );
   const [number, onChangeNumber] = React.useState(null);
+  const handleTicketResult = () => {
+    props.navigation.navigate('TicketResult');
+  };
   return (
     <>
       <View
@@ -164,7 +167,9 @@ function Order() {
             />
           </View>
           <TouchableOpacity style={styles.buttonCheckout}>
-            <Text style={{textAlign: 'center', fontSize: 14, color: '#F7F7FC'}}>
+            <Text
+              style={{textAlign: 'center', fontSize: 14, color: '#F7F7FC'}}
+              onPress={handleTicketResult}>
               Pay Your Order
             </Text>
           </TouchableOpacity>
@@ -278,4 +283,4 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
 });
-export default Order;
+export default Payment;
