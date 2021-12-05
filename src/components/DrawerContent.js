@@ -16,8 +16,8 @@ class DrawerContent extends React.Component {
           <View style={styles.containerProfile}>
             <View style={styles.avatar} />
             <View style={styles.biodata}>
-              <Text style={styles.title}>Anonymous</Text>
-              <Text style={styles.caption}>@bagustea</Text>
+              <Text style={styles.title}>Fachri Maulana</Text>
+              <Text style={styles.caption}>@Mr. Taro</Text>
             </View>
           </View>
           <DrawerItemList {...this.props} />

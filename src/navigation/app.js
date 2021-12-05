@@ -9,6 +9,7 @@ const Drawer = createDrawerNavigator();
 import Home from '../screen/Home';
 import MovieDetail from '../screen/MovieDetail';
 import Order from '../screen/Order';
+import Payment from '../screen/Payment';
 import Profile from '../screen/Profile';
 
 import DrawerContent from '../components/DrawerContent';
@@ -47,6 +48,18 @@ function ProfileNavigator() {
   );
 }
 
+function PaymentNavigator() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        component={Payment}
+        name="Payment"
+        options={{headerShown: false}}
+      />
+    </Stack.Navigator>
+  );
+}
+
 function AppNavigator() {
   return (
     <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />}>
@@ -65,6 +78,16 @@ function AppNavigator() {
         name="ProfileNavigator"
         options={{
           title: 'Profile',
+          drawerIcon: ({size, color}) => (
+            <Icon name="user" size={size} color={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        component={PaymentNavigator}
+        name="PaymentNavigator"
+        options={{
+          title: 'Payment',
           drawerIcon: ({size, color}) => (
             <Icon name="user" size={size} color={color} />
           ),
