@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
   containerprofile: {
     flex: 1,
     padding: 24,
-    backgroundColor: '#D6D8E7',
+    backgroundColor: '#f5f6f8',
   },
   scrollView: {
     marginHorizontal: 0,

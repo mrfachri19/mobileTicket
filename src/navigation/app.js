@@ -8,6 +8,7 @@ const Drawer = createDrawerNavigator();
 
 import Home from '../screen/Home';
 import MovieDetail from '../screen/MovieDetail';
+import Order from '../screen/Order';
 import Profile from '../screen/Profile';
 
 import DrawerContent from '../components/DrawerContent';
@@ -23,6 +24,11 @@ function HomeNavigator() {
       <Stack.Screen
         component={MovieDetail}
         name="MovieDetail"
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        component={Order}
+        name="Order"
         options={{headerShown: false}}
       />
     </Stack.Navigator>
