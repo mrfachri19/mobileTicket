@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {
   View,
   Text,
@@ -18,13 +18,197 @@ import yt from '../../assets/yt.png';
 import ig from '../../assets/ig.png';
 import fb from '../../assets/fb.png';
 import twit from '../../assets/twit.png';
+import {getUserById} from '../../stores/actions/user';
+import axios from '../../utils/axios';
+import {connect} from 'react-redux';
 
 function Profile(props) {
+  const inputFile = useRef(null);
+  const [dataUser, setDataUser] = useState({
+    firstName: props.user.user.firstName,
+    lastName: props.user.user.lastName,
+    noTelp: props.user.user.noTelp,
+    email: props.user.user.email,
+    password: props.user.user.password,
+  });
+  console.log(dataUser);
+  const [image, setImage] = useState({image: ''});
+  const [isSuccess, setIsSuccess] = useState({
+    status: false,
+    msg: '',
+  });
+
+  const [isError, setIsError] = useState({
+    status: false,
+    msg: '',
+  });
+
+  const onButtonPress = () => {
+    inputFile.current.press();
+  };
+
+  const handleUpdateImage = () => {
+    if (image === null || !image.image) {
+    } else {
+      const formData = new FormData();
+      for (const data in image) {
+        formData.append(data, image[data]);
+      }
+      axios
+        .patch(`/user/${props.user.user.id}`, formData)
+        .then(res => {
+          setIsSuccess({
+            status: true,
+            msg: res.data.msg,
+          });
+
+          setTimeout(() => {
+            setIsSuccess({
+              status: false,
+              msg: '',
+            });
+          }, 3000);
+        })
+        .catch(err => {
+          setIsError({
+            status: true,
+            msg: err.response.data.msg,
+          });
+
+          setTimeout(() => {
+            setIsError({
+              status: false,
+              msg: '',
+            });
+          }, 3000);
+        });
+    }
+  };
+
+  const handleDelete = () => {
+    axios
+      .delete(`/user/${props.user.user.id}`)
+      .then(res => {
+        setIsSuccess({
+          status: true,
+          msg: res.data.msg,
+        });
+
+        setTimeout(() => {
+          setIsSuccess({
+            status: false,
+            msg: '',
+          });
+        }, 3000);
+      })
+      .catch(err => {
+        setIsError({
+          status: true,
+          msg: err.response.data.msg,
+        });
+
+        setTimeout(() => {
+          setIsError({
+            status: false,
+            msg: '',
+          });
+        }, 3000);
+      });
+  };
+
+  const changeText = e => {
+    const {name, value} = e.target;
+
+    setDataUser({
+      ...dataUser,
+      [name]: value,
+    });
+  };
+
+  const saveChanges = () => {
+    axios
+      .patch(`/user/${props.user.user.id}`, dataUser)
+      .then(res => {
+        setIsSuccess({
+          status: true,
+          msg: res.data.msg,
+        });
+
+        setTimeout(() => {
+          setIsSuccess({
+            status: false,
+            msg: '',
+          });
+        }, 3000);
+      })
+      .catch(err => {
+        setIsError({
+          status: true,
+          msg: err.response.data.msg,
+        });
+
+        setTimeout(() => {
+          setIsError({
+            status: false,
+            msg: '',
+          });
+        }, 3000);
+      });
+  };
+
+  useEffect(() => {
+    handleUpdateImage();
+  });
+
+  const [password, setPassword] = useState({
+    newPassword: '',
+    confirmPassword: '',
+  });
+
+  const changePassword = e => {
+    setPassword({
+      ...password,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const updatePassword = () => {
+    axios
+      .patch(`/user/update-password/${props.user.user.id}`, password)
+      .then(res => {
+        setIsSuccess({
+          status: true,
+          msg: res.data.msg,
+        });
+
+        setTimeout(() => {
+          setIsSuccess({
+            status: false,
+            msg: '',
+          });
+        }, 3000);
+      })
+      .catch(err => {
+        setIsError({
+          status: true,
+          msg: err.response.data.msg,
+        });
+
+        setTimeout(() => {
+          setIsError({
+            status: false,
+            msg: '',
+          });
+        }, 3000);
+      });
+  };
+
   const [text, onChangeText] = React.useState('Jon Don Bosco');
   const [email, onChangeEmail] = React.useState(
     'jondonpablopatricio@gmail.com',
   );
   const [number, onChangeNumber] = React.useState(null);
+
   const handleOrderHistory = () => {
     props.navigation.navigate('OrderHistory');
   };
@@ -40,7 +224,9 @@ function Profile(props) {
           flexDirection: 'row',
           height: 58,
         }}>
-        <TouchableOpacity style={{flex: 6}}>
+        <TouchableOpacity
+          style={{flex: 6}}
+          onPress={() => props.getUserById(props.auth.idUser)}>
           <Text style={{fontSize: 14, color: '#14142B'}}>Detail Account</Text>
         </TouchableOpacity>
         <TouchableOpacity style={{flex: 6}}>
@@ -68,7 +254,7 @@ function Profile(props) {
                 fontFamily: 'mulish',
                 color: '#14142B',
               }}>
-              Jon Don Bosco
+              {props.user.user.firstName}
             </Text>
             <Text style={{textAlign: 'center', fontSize: 18, color: '#4E4B66'}}>
               Moviegoers
@@ -115,7 +301,7 @@ function Profile(props) {
             <TextInput
               style={styles.input}
               onChangeText={onChangeText}
-              value={text}
+              value={props.user.user.firstName}
             />
             <Text
               style={{
@@ -129,7 +315,7 @@ function Profile(props) {
             <TextInput
               style={styles.input}
               onChangeText={onChangeEmail}
-              value={email}
+              value={props.user.user.email}
             />
             <Text
               style={{
@@ -143,7 +329,7 @@ function Profile(props) {
             <TextInput
               style={styles.input}
               onChangeText={onChangeNumber}
-              value={number}
+              value={props.user.user.noTelp}
               placeholder="+62"
               keyboardType="numeric"
             />
@@ -152,7 +338,7 @@ function Profile(props) {
             style={{
               backgroundColor: '#FFFFFF',
               width: 310,
-              height: 479,
+              height: 400,
               borderRadius: 24,
               paddingLeft: 24,
               marginTop: 24,
@@ -283,74 +469,6 @@ function Profile(props) {
             © 2020 Tickitz. All Rights Reserved.
           </Text>
         </View>
-        <View
-          style={{backgroundColor: 'white', paddingTop: 75, paddingLeft: 24}}>
-          <Image source={tikit} />
-          <Text style={{fontSize: 14, color: '#6E7191', marginTop: 15}}>
-            Stop waiting in line. Buy tickets {'\n'}conveniently, watch movies
-            quietly.
-          </Text>
-          <Text style={{fontSize: 14, color: '#000000', marginTop: 15}}>
-            Explore
-          </Text>
-          <View style={{flexDirection: 'row'}}>
-            <Text
-              style={{
-                fontSize: 14,
-                color: '#6E7191',
-                marginTop: 15,
-                flex: 3,
-              }}>
-              Cinemast
-            </Text>
-            <Text
-              style={{
-                fontSize: 14,
-                color: '#6E7191',
-                marginTop: 15,
-                flex: 3,
-              }}>
-              Movie List
-            </Text>
-            <Text
-              style={{
-                fontSize: 14,
-                color: '#6E7191',
-                marginTop: 15,
-                flex: 3,
-              }}>
-              Notification
-            </Text>
-          </View>
-          <Text
-            style={{
-              fontSize: 14,
-              color: '#6E7191',
-              marginTop: 15,
-            }}>
-            My Ticket
-          </Text>
-          <Text style={{fontSize: 14, color: '#000000', marginTop: 45}}>
-            Our Sponsore
-          </Text>
-          <View style={{flexDirection: 'row', marginTop: 16}}>
-            <Image style={{marginRight: 24}} source={ebu} />
-            <Image style={{marginRight: 24}} source={hiflix} />
-            <Image style={{marginRight: 24}} source={cinema} />
-          </View>
-          <Text style={{fontSize: 14, color: '#000000', marginTop: 45}}>
-            Follow Us
-          </Text>
-          <View style={{flexDirection: 'row', marginTop: 16}}>
-            <Image style={{marginRight: 41}} source={yt} />
-            <Image style={{marginRight: 41}} source={fb} />
-            <Image style={{marginRight: 41}} source={twit} />
-            <Image style={{marginRight: 41}} source={ig} />
-          </View>
-          <Text style={{fontSize: 13, color: '#6E7191', marginVertical: 64}}>
-            © 2020 Tickitz. All Rights Reserved.
-          </Text>
-        </View>
       </ScrollView>
     </>
   );
@@ -388,5 +506,10 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
 });
+const mapStateToProps = state => ({
+  user: state.user,
+  auth: state.auth,
+});
+const mapDispatchToProps = {getUserById};
 
-export default Profile;
+export default connect(mapStateToProps, mapDispatchToProps)(Profile);

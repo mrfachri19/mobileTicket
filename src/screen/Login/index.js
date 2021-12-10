@@ -14,6 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from '../../utils/axios';
 import {connect} from 'react-redux';
 import {login} from '../../stores/actions/auth';
+import {getUserById} from '../../stores/actions/user';
 
 function Login(props) {
   const [form, setForm] = useState({email: '', password: ''});
@@ -21,11 +22,13 @@ function Login(props) {
     try {
       // const result = await axios.post('/auth/login', form);
       const result = await props.login(form);
+
       await AsyncStorage.setItem('token', result.value.data.data.token);
       await AsyncStorage.setItem(
         'refreshToken',
         result.value.data.data.refreshToken,
       );
+      await props.getUserById(result.value.data.data.id);
       props.navigation.navigate('AppScreen', {
         screen: 'Home',
         params: {
@@ -133,8 +136,9 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
   auth: state.auth,
+  user: state.user,
 });
 
-const mapDispatchToProps = {login};
+const mapDispatchToProps = {login, getUserById};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

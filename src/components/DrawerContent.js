@@ -10,8 +10,8 @@ import Icon from 'react-native-vector-icons/Feather';
 
 class DrawerContent extends React.Component {
   handleLogout = async () => {
-    await AsyncStorage.removeItem('token');
-    await AsyncStorage.removeItem('refreshToken');
+    await AsyncStorage.clear();
+    this.props.navigation.navigate('AuthScreen');
   };
   render() {
     return (
