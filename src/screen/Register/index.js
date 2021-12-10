@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -11,21 +11,34 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import tiket from '../../assets/Vector.png';
+import {connect} from 'react-redux';
+import {register} from '../../stores/actions/auth';
+import axios from '../../utils/axios';
 
 function Register(props) {
-  const handleLogin = () => {
-    // props.navigation.navigate('AppScreen', {
-    //   screen: 'Home',
-    //   params: {
-    //     nama: 'Bagus TH',
-    //   },
-    // });
+  const [formRegister, setFormRegister] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    noTelp: '',
+  });
+
+  const handleSubmit = async () => {
+    try {
+      // const result = await axios.post('/auth/login', form);
+      const result = await props.register(formRegister);
+      props.navigation.navigate('Login');
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleInput = (text, name) => {
+    setFormRegister({...formRegister, [name]: text});
   };
   const handleLoginnow = () => {
     props.navigation.navigate('Login');
   };
-  const [text, onChangeText] = React.useState(null);
-  const [password, onChangePassword] = React.useState(null);
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
@@ -35,37 +48,35 @@ function Register(props) {
           <Text style={styles.email}>First Name</Text>
           <TextInput
             style={styles.input}
-            onChangeText={onChangeText}
-            value={text}
+            onChangeText={text => handleInput(text, 'firstName')}
             placeholder="Enter First Name"
-            keyboardType="text"
           />
           <Text style={styles.password}>Last Name</Text>
           <TextInput
             style={styles.input}
-            onChangeText={onChangeText}
-            value={text}
+            onChangeText={text => handleInput(text, 'lastName')}
             placeholder="Enter Last Name"
-            keyboardType="text"
+          />
+          <Text style={styles.password}>Phone Number</Text>
+          <TextInput
+            style={styles.input}
+            onChangeText={text => handleInput(text, 'noTelp')}
+            placeholder="Enter Phone Number"
           />
           <Text style={styles.password}>Email</Text>
           <TextInput
             style={styles.input}
-            onChangeText={onChangeText}
-            value={text}
+            onChangeText={text => handleInput(text, 'email')}
             placeholder="Email"
-            keyboardType="text"
           />
           <Text style={styles.password}>Password</Text>
           <TextInput
             style={styles.input}
-            onChangeText={onChangePassword}
-            value={password}
+            onChangeText={text => handleInput(text, 'password')}
             placeholder="Enter Password"
-            keyboardType="password"
           />
           <View style={styles.btn}>
-            <Button title="Sign Up" color="#5F2EEA" onPress={handleLogin} />
+            <Button title="Sign Up" color="#5F2EEA" onPress={handleSubmit} />
           </View>
           <View
             style={{
@@ -124,4 +135,12 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Register;
+const mapStateToProps = state => ({
+  auth: state.auth,
+});
+
+const mapDispatchToProps = {
+  register,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Register);

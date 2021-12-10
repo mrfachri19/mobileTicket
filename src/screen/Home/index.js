@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -9,7 +9,11 @@ import {
   TextInput,
   TouchableOpacity,
   TouchableHighlight,
+  FlatList,
+  Button,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from '../../utils/axios';
 import home from '../../assets/headhome.png';
 import spiderman from '../../assets/spiderman.png';
 import tikit from '../../assets/tiket.png';
@@ -22,9 +26,37 @@ import fb from '../../assets/fb.png';
 import twit from '../../assets/twit.png';
 
 function Home(props) {
+  const [movie, setMovie] = useState([]);
+
+  useEffect(() => {
+    // console.log(props.route.params.nama);
+    getToken();
+    getMovie();
+  }, []);
   // useEffect(() => {
   //   console.log(props.route.params.nama);
   // }, []);
+  const getToken = async () => {
+    const dataToken = await AsyncStorage.getItem('token');
+    console.log(dataToken);
+    AsyncStorage.getAllKeys((err, keys) => {
+      AsyncStorage.multiGet(keys, (error, stores) => {
+        stores.map((result, i, store) => {
+          console.log({[store[i][0]]: store[i][1]});
+          return true;
+        });
+      });
+    });
+  };
+  const getMovie = async () => {
+    try {
+      const result = await axios.get('/movie?page=1&limit=7');
+      setMovie(result.data.data);
+      console.log(result);
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
   const [titleText, setTitleText] = useState(' Find out now!');
   const bodyText = 'Nearest Cinema, Newest Movie,';
   const onPressTitle = () => {
@@ -59,17 +91,27 @@ function Home(props) {
           </View>
           <View style={{flexDirection: 'row', marginTop: 32}}>
             <ScrollView horizontal={true}>
-              <View style={styles.border}>
-                <Image source={spiderman} />
-              </View>
-              <View style={styles.border}>
-                <Image source={spiderman} />
-              </View>
-              <View style={styles.border}>
-                <Image source={spiderman} />
-              </View>
-              <View style={styles.border}>
-                <Image source={spiderman} />
+              <View>
+                <FlatList
+                  horizontal
+                  data={movie}
+                  renderItem={({item}) => (
+                    <View style={styles.card}>
+                      <Image
+                        style={styles.cardImage}
+                        source={{
+                          uri: `http://192.168.43.99:3001/uploads/movie/${item.image}`,
+                        }}
+                      />
+                      <Text style={styles.title}>{item.name}</Text>
+                      <Text style={styles.tagline}>{item.category}</Text>
+                      <TouchableHighlight style={styles.buttondetail}>
+                        <Text style={styles.textdetail}>Detail</Text>
+                      </TouchableHighlight>
+                    </View>
+                  )}
+                  keyExtractor={item => item.id}
+                />
               </View>
             </ScrollView>
           </View>
@@ -102,47 +144,27 @@ function Home(props) {
           </View>
           <View style={{flexDirection: 'row', marginTop: 32}}>
             <ScrollView horizontal={true} style={{margin: 10}}>
-              <View style={styles.border}>
-                <Image source={spiderman} />
-                <Text style={styles.title}>Black Widow</Text>
-                <Text style={styles.tagline}>Action, Romance, Comedy</Text>
-                <TouchableHighlight style={styles.buttondetail}>
-                  <Text style={styles.textdetail} onPress={handleMovieDetail}>
-                    Detail
-                  </Text>
-                </TouchableHighlight>
-              </View>
-              <View style={styles.border}>
-                <Image source={spiderman} />
-                <Text style={styles.title}>Black Widow</Text>
-                <Text style={styles.tagline}>Action, Romance, Comedy</Text>
-                <TouchableHighlight style={styles.buttondetail}>
-                  <Text style={styles.textdetail}>Detail</Text>
-                </TouchableHighlight>
-              </View>
-              <View style={styles.border}>
-                <Image source={spiderman} />
-                <Text style={styles.title}>Black Widow</Text>
-                <Text style={styles.tagline}>Action, Romance, Comedy</Text>
-                <TouchableHighlight style={styles.buttondetail}>
-                  <Text style={styles.textdetail}>Detail</Text>
-                </TouchableHighlight>
-              </View>
-              <View style={styles.border}>
-                <Image source={spiderman} />
-                <Text style={styles.title}>Black Widow</Text>
-                <Text style={styles.tagline}>Action, Romance, Comedy</Text>
-                <TouchableHighlight style={styles.buttondetail}>
-                  <Text style={styles.textdetail}>Detail</Text>
-                </TouchableHighlight>
-              </View>
-              <View style={styles.border}>
-                <Image source={spiderman} />
-                <Text style={styles.title}>Black Widow</Text>
-                <Text style={styles.tagline}>Action, Romance, Comedy</Text>
-                <TouchableHighlight style={styles.buttondetail}>
-                  <Text style={styles.textdetail}>Detail</Text>
-                </TouchableHighlight>
+              <View>
+                <FlatList
+                  horizontal
+                  data={movie}
+                  renderItem={({item}) => (
+                    <View style={styles.card}>
+                      <Image
+                        style={styles.cardImage}
+                        source={{
+                          uri: `http://192.168.43.99:3001/uploads/movie/${item.image}`,
+                        }}
+                      />
+                      <Text style={styles.title}>{item.name}</Text>
+                      <Text style={styles.tagline}>{item.category}</Text>
+                      <TouchableHighlight style={styles.buttondetail}>
+                        <Text style={styles.textdetail}>Detail</Text>
+                      </TouchableHighlight>
+                    </View>
+                  )}
+                  keyExtractor={item => item.id}
+                />
               </View>
             </ScrollView>
           </View>
@@ -288,13 +310,7 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
     fontSize: 14,
-  },
-  border: {
-    border: 0.5,
-    shadowColor: '#DEDEDE',
-    shadowOpacity: 1,
-    marginRight: 16,
-    padding: 16,
+    alignItems: 'center',
   },
   title: {
     fontSize: 14,
@@ -335,6 +351,21 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     marginTop: 16,
     marginHorizontal: 32,
+  },
+  card: {
+    backgroundColor: 'white',
+    elevation: 0,
+    width: 152,
+    borderRadius: 16,
+    alignItems: 'center',
+    padding: 10,
+    margin: 10,
+    borderWidth: 0.5,
+    borderColor: '#DEDEDE',
+  },
+  cardImage: {
+    width: 120,
+    height: 185,
   },
 });
 export default Home;

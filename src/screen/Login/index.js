@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -10,16 +10,37 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import tiket from '../../assets/Vector.png';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from '../../utils/axios';
+import {connect} from 'react-redux';
+import {login} from '../../stores/actions/auth';
 
 function Login(props) {
-  const handleLogin = () => {
-    props.navigation.navigate('AppScreen', {
-      screen: 'Home',
-      params: {
-        nama: 'Bagus TH',
-      },
-    });
+  const [form, setForm] = useState({email: '', password: ''});
+  const handleLogin = async () => {
+    try {
+      // const result = await axios.post('/auth/login', form);
+      const result = await props.login(form);
+      await AsyncStorage.setItem('token', result.value.data.data.token);
+      await AsyncStorage.setItem(
+        'refreshToken',
+        result.value.data.data.refreshToken,
+      );
+      props.navigation.navigate('AppScreen', {
+        screen: 'Home',
+        params: {
+          nama: 'Fachri Maulana',
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+  const handleInput = (text, name) => {
+    setForm({...form, [name]: text});
+  };
+
   const handleForgotPassword = () => {
     props.navigation.navigate('ForgotPassword');
   };
@@ -27,8 +48,6 @@ function Login(props) {
     props.navigation.navigate('Register');
   };
 
-  const [text, onChangeText] = React.useState(null);
-  const [password, onChangePassword] = React.useState(null);
   return (
     <View style={styles.container}>
       <Image source={tiket} />
@@ -37,18 +56,15 @@ function Login(props) {
         <Text style={styles.email}>Email</Text>
         <TextInput
           style={styles.input}
-          onChangeText={onChangeText}
-          value={text}
+          onChangeText={text => handleInput(text, 'email')}
           placeholder="Enter Email"
-          keyboardType="text"
         />
         <Text style={styles.password}>Password</Text>
         <TextInput
           style={styles.input}
-          onChangeText={onChangePassword}
-          value={password}
+          onChangeText={text => handleInput(text, 'password')}
+          secureTextEntry={true}
           placeholder="Enter Password"
-          keyboardType="text"
         />
         <View style={styles.btn}>
           <Button title="Sign In" color="#5F2EEA" onPress={handleLogin} />
@@ -115,4 +131,10 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Login;
+const mapStateToProps = state => ({
+  auth: state.auth,
+});
+
+const mapDispatchToProps = {login};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

@@ -19,7 +19,12 @@ import ig from '../../assets/ig.png';
 import fb from '../../assets/fb.png';
 import twit from '../../assets/twit.png';
 
-function Order() {
+function Order(props) {
+  const handlePayment = () => {
+    props.navigation.navigate('AppScreen', {
+      screen: 'Payment',
+    });
+  };
   return (
     <>
       <ScrollView style={styles.scrollView}>
@@ -238,7 +243,9 @@ function Order() {
             </View>
           </View>
           <TouchableOpacity style={styles.buttonCheckout}>
-            <Text style={{textAlign: 'center', fontSize: 14, color: '#F7F7FC'}}>
+            <Text
+              style={{textAlign: 'center', fontSize: 14, color: '#F7F7FC'}}
+              onPress={handlePayment}>
               Checkout now
             </Text>
           </TouchableOpacity>
@@ -325,7 +332,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f6f8',
   },
   buttonCheckout: {
-    marginTop: 90,
+    marginTop: 70,
+    marginBottom: 40,
     height: 40,
     padding: 11,
     backgroundColor: '#5F2EEA',

@@ -85,7 +85,7 @@ function Payment(props) {
             <View
               style={{
                 borderWidth: 0.5,
-                borderColor: 'black',
+                borderColor: '#DEDEDE',
                 marginLeft: 24,
                 marginRight: 24,
                 width: 260,
@@ -144,7 +144,7 @@ function Payment(props) {
             </Text>
             <TextInput
               style={styles.input}
-              onChangeText={onChangeText}
+              onChangeText={onChangeEmail}
               value={email}
               placeholder="jonexample@gmail.com"
               keyboardType="text"
@@ -277,6 +277,7 @@ const styles = StyleSheet.create({
   },
   buttonCheckout: {
     marginTop: 56,
+    marginBottom: 40,
     height: 40,
     padding: 11,
     backgroundColor: '#5F2EEA',

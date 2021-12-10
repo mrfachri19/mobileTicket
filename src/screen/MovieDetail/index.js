@@ -51,7 +51,7 @@ function MovieDetail(props) {
             style={{
               marginTop: 8,
               fontSize: 16,
-              color: ' #4E4B66',
+              color: '#4E4B66',
               textAlign: 'center',
             }}>
             Action, Adventure, Comedy
@@ -315,39 +315,48 @@ function MovieDetail(props) {
               style={{
                 width: 40,
                 height: 40,
-                backgroundColor: '#5F2EEA',
+                backgroundColor: 'white',
                 borderRadius: 8,
                 paddingTop: 6,
                 marginRight: 8,
+                borderColor: '#DEDEDE',
+                borderWidth: 1,
               }}>
-              <Text style={{textAlign: 'center', fontSize: 18, color: 'white'}}>
-                1
+              <Text
+                style={{textAlign: 'center', fontSize: 18, color: '#4E4B66'}}>
+                2
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={{
                 width: 40,
                 height: 40,
-                backgroundColor: '#5F2EEA',
+                backgroundColor: 'white',
                 borderRadius: 8,
                 paddingTop: 6,
                 marginRight: 8,
+                borderColor: '#DEDEDE',
+                borderWidth: 1,
               }}>
-              <Text style={{textAlign: 'center', fontSize: 18, color: 'white'}}>
-                1
+              <Text
+                style={{textAlign: 'center', fontSize: 18, color: '#4E4B66'}}>
+                3
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={{
                 width: 40,
                 height: 40,
-                backgroundColor: '#5F2EEA',
+                backgroundColor: 'white',
                 borderRadius: 8,
                 paddingTop: 6,
                 marginRight: 8,
+                borderColor: '#DEDEDE',
+                borderWidth: 1,
               }}>
-              <Text style={{textAlign: 'center', fontSize: 18, color: 'white'}}>
-                1
+              <Text
+                style={{textAlign: 'center', fontSize: 18, color: '#4E4B66'}}>
+                4
               </Text>
             </TouchableOpacity>
           </View>

@@ -5,10 +5,14 @@ import {
   DrawerItem,
   DrawerItemList,
 } from '@react-navigation/drawer';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/Feather';
 
 class DrawerContent extends React.Component {
+  handleLogout = async () => {
+    await AsyncStorage.removeItem('token');
+    await AsyncStorage.removeItem('refreshToken');
+  };
   render() {
     return (
       <View style={styles.container}>
@@ -28,7 +32,7 @@ class DrawerContent extends React.Component {
             icon={({color, size}) => (
               <Icon color={color} size={size} name="log-out" />
             )}
-            onPress={() => alert('Logged out')}
+            onPress={this.handleLogout}
           />
         </View>
       </View>
