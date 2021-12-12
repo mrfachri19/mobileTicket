@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -19,10 +19,55 @@ import yt from '../../assets/yt.png';
 import ig from '../../assets/ig.png';
 import fb from '../../assets/fb.png';
 import twit from '../../assets/twit.png';
+import axios from '../../utils/axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function MovieDetail(props) {
   const [date, setDate] = useState(new Date());
   const [open, setOpen] = useState(false);
+
+  const [movie, setMovie] = useState([]);
+
+  useEffect(() => {
+    // console.log(props.route.params.nama);
+    getToken();
+    getMovie();
+    getMovieById();
+  }, []);
+  // useEffect(() => {
+  //   console.log(props.route.params.nama);
+  // }, []);
+  const getToken = async () => {
+    const dataToken = await AsyncStorage.getItem('token');
+    console.log(dataToken);
+    AsyncStorage.getAllKeys((err, keys) => {
+      AsyncStorage.multiGet(keys, (error, stores) => {
+        stores.map((result, i, store) => {
+          console.log({[store[i][0]]: store[i][1]});
+          return true;
+        });
+      });
+    });
+  };
+  const getMovie = async () => {
+    try {
+      const result = await axios.get('/movie?page=1&limit=7');
+      setMovie(result.data.data);
+      console.log(result.data.data);
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+  const getMovieById = async id => {
+    try {
+      const result = await axios.get(`/movie/${id}`);
+      setMovie(result.data.data);
+      console.log(result.data.data);
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
   const handleOrder = () => {
     props.navigation.navigate('Order');
   };

@@ -52,7 +52,7 @@ function Home(props) {
     try {
       const result = await axios.get('/movie?page=1&limit=7');
       setMovie(result.data.data);
-      console.log(result);
+      console.log(result.data.data);
     } catch (error) {
       console.log(error.response);
     }
@@ -106,7 +106,11 @@ function Home(props) {
                       <Text style={styles.title}>{item.name}</Text>
                       <Text style={styles.tagline}>{item.category}</Text>
                       <TouchableHighlight style={styles.buttondetail}>
-                        <Text style={styles.textdetail}>Detail</Text>
+                        <Text
+                          style={styles.textdetail}
+                          onPress={handleMovieDetail}>
+                          Detail
+                        </Text>
                       </TouchableHighlight>
                     </View>
                   )}

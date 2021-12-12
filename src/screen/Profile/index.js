@@ -29,10 +29,8 @@ function Profile(props) {
     lastName: props.user.user.lastName,
     noTelp: props.user.user.noTelp,
     email: props.user.user.email,
-    password: props.user.user.password,
   });
   console.log(dataUser);
-  const [image, setImage] = useState({image: ''});
   const [isSuccess, setIsSuccess] = useState({
     status: false,
     msg: '',
@@ -43,89 +41,11 @@ function Profile(props) {
     msg: '',
   });
 
-  const onButtonPress = () => {
-    inputFile.current.press();
+  const handleInput = (text, name) => {
+    setDataUser({...dataUser, [name]: text});
   };
 
-  const handleUpdateImage = () => {
-    if (image === null || !image.image) {
-    } else {
-      const formData = new FormData();
-      for (const data in image) {
-        formData.append(data, image[data]);
-      }
-      axios
-        .patch(`/user/${props.user.user.id}`, formData)
-        .then(res => {
-          setIsSuccess({
-            status: true,
-            msg: res.data.msg,
-          });
-
-          setTimeout(() => {
-            setIsSuccess({
-              status: false,
-              msg: '',
-            });
-          }, 3000);
-        })
-        .catch(err => {
-          setIsError({
-            status: true,
-            msg: err.response.data.msg,
-          });
-
-          setTimeout(() => {
-            setIsError({
-              status: false,
-              msg: '',
-            });
-          }, 3000);
-        });
-    }
-  };
-
-  const handleDelete = () => {
-    axios
-      .delete(`/user/${props.user.user.id}`)
-      .then(res => {
-        setIsSuccess({
-          status: true,
-          msg: res.data.msg,
-        });
-
-        setTimeout(() => {
-          setIsSuccess({
-            status: false,
-            msg: '',
-          });
-        }, 3000);
-      })
-      .catch(err => {
-        setIsError({
-          status: true,
-          msg: err.response.data.msg,
-        });
-
-        setTimeout(() => {
-          setIsError({
-            status: false,
-            msg: '',
-          });
-        }, 3000);
-      });
-  };
-
-  const changeText = e => {
-    const {name, value} = e.target;
-
-    setDataUser({
-      ...dataUser,
-      [name]: value,
-    });
-  };
-
-  const saveChanges = () => {
+  const updateProfile = () => {
     axios
       .patch(`/user/${props.user.user.id}`, dataUser)
       .then(res => {
@@ -139,7 +59,7 @@ function Profile(props) {
             status: false,
             msg: '',
           });
-        }, 3000);
+        }, 1000);
       })
       .catch(err => {
         setIsError({
@@ -152,24 +72,17 @@ function Profile(props) {
             status: false,
             msg: '',
           });
-        }, 3000);
+        }, 1000);
       });
   };
-
-  useEffect(() => {
-    handleUpdateImage();
-  });
 
   const [password, setPassword] = useState({
     newPassword: '',
     confirmPassword: '',
   });
 
-  const changePassword = e => {
-    setPassword({
-      ...password,
-      [e.target.name]: e.target.value,
-    });
+  const handleInputPassword = (text, name) => {
+    setPassword({...password, [name]: text});
   };
 
   const updatePassword = () => {
@@ -186,7 +99,7 @@ function Profile(props) {
             status: false,
             msg: '',
           });
-        }, 3000);
+        }, 1000);
       })
       .catch(err => {
         setIsError({
@@ -203,12 +116,6 @@ function Profile(props) {
       });
   };
 
-  const [text, onChangeText] = React.useState('Jon Don Bosco');
-  const [email, onChangeEmail] = React.useState(
-    'jondonpablopatricio@gmail.com',
-  );
-  const [number, onChangeNumber] = React.useState(null);
-
   const handleOrderHistory = () => {
     props.navigation.navigate('OrderHistory');
   };
@@ -224,9 +131,7 @@ function Profile(props) {
           flexDirection: 'row',
           height: 58,
         }}>
-        <TouchableOpacity
-          style={{flex: 6}}
-          onPress={() => props.getUserById(props.auth.idUser)}>
+        <TouchableOpacity style={{flex: 6}}>
           <Text style={{fontSize: 14, color: '#14142B'}}>Detail Account</Text>
         </TouchableOpacity>
         <TouchableOpacity style={{flex: 6}}>
@@ -300,8 +205,11 @@ function Profile(props) {
             </Text>
             <TextInput
               style={styles.input}
-              onChangeText={onChangeText}
-              value={props.user.user.firstName}
+              onChangeText={text => handleInput(text, 'firstName')}
+              name="firstName"
+              // value={props.user.user.firstName}
+              placeholder="Input First Name ..."
+              type="text"
             />
             <Text
               style={{
@@ -314,8 +222,11 @@ function Profile(props) {
             </Text>
             <TextInput
               style={styles.input}
-              onChangeText={onChangeEmail}
-              value={props.user.user.email}
+              onChangeText={text => handleInput(text, 'email')}
+              // value={props.user.user.email}
+              type="email"
+              name="email"
+              placeholder="Input your email ..."
             />
             <Text
               style={{
@@ -328,12 +239,18 @@ function Profile(props) {
             </Text>
             <TextInput
               style={styles.input}
-              onChangeText={onChangeNumber}
-              value={props.user.user.noTelp}
+              onChangeText={text => handleInput(text, 'noTelp')}
+              // value={props.user.user.noTelp}
               placeholder="+62"
-              keyboardType="numeric"
             />
           </View>
+          <TouchableOpacity style={styles.buttonCheckout}>
+            <Text
+              style={{textAlign: 'center', fontSize: 14, color: '#F7F7FC'}}
+              onPress={updateProfile}>
+              Update Changes
+            </Text>
+          </TouchableOpacity>
           <View
             style={{
               backgroundColor: '#FFFFFF',
@@ -341,7 +258,7 @@ function Profile(props) {
               height: 400,
               borderRadius: 24,
               paddingLeft: 24,
-              marginTop: 24,
+              marginTop: 30,
             }}>
             <Text
               style={{
@@ -372,10 +289,9 @@ function Profile(props) {
             </Text>
             <TextInput
               style={styles.input}
-              onChangeText={onChangeNumber}
-              value={number}
-              placeholder="password"
-              keyboardType="numeric"
+              onChangeText={text => handleInputPassword(text, 'newPassword')}
+              secureTextEntry={true}
+              placeholder="Enter New Password"
             />
             <Text
               style={{
@@ -388,14 +304,17 @@ function Profile(props) {
             </Text>
             <TextInput
               style={styles.input}
-              onChangeText={onChangeNumber}
-              value={number}
-              placeholder="password"
-              keyboardType="numeric"
+              onChangeText={text =>
+                handleInputPassword(text, 'confirmPassword')
+              }
+              secureTextEntry={true}
+              placeholder="Enter Confirm Password"
             />
           </View>
           <TouchableOpacity style={styles.buttonCheckout}>
-            <Text style={{textAlign: 'center', fontSize: 14, color: '#F7F7FC'}}>
+            <Text
+              style={{textAlign: 'center', fontSize: 14, color: '#F7F7FC'}}
+              onPress={updatePassword}>
               Update Changes
             </Text>
           </TouchableOpacity>

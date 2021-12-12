@@ -36,6 +36,7 @@ function Register(props) {
   const handleInput = (text, name) => {
     setFormRegister({...formRegister, [name]: text});
   };
+
   const handleLoginnow = () => {
     props.navigation.navigate('Login');
   };
