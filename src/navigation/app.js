@@ -80,9 +80,6 @@ function AppNavigator() {
         name="HomeNavigator"
         options={{
           title: 'Home',
-          drawerIcon: ({size, color}) => (
-            <Icon name="home" size={size} color={color} />
-          ),
         }}
       />
       <Drawer.Screen
@@ -90,9 +87,6 @@ function AppNavigator() {
         name="ProfileNavigator"
         options={{
           title: 'Profile',
-          drawerIcon: ({size, color}) => (
-            <Icon name="user" size={size} color={color} />
-          ),
         }}
       />
       <Drawer.Screen
@@ -100,9 +94,6 @@ function AppNavigator() {
         name="PaymentNavigator"
         options={{
           title: 'Payment',
-          drawerIcon: ({size, color}) => (
-            <Icon name="user" size={size} color={color} />
-          ),
         }}
       />
     </Drawer.Navigator>

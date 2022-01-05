@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  FlatList,
 } from 'react-native';
 import right from '../../assets/rightarrow.png';
 import buttom from '../../assets/buttomarrow.png';
@@ -18,8 +19,44 @@ import yt from '../../assets/yt.png';
 import ig from '../../assets/ig.png';
 import fb from '../../assets/fb.png';
 import twit from '../../assets/twit.png';
-
+import Seat from '../../components/Seat';
 function Order(props) {
+  const listSeat = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+  const [selectedSeat, setSelectedSeat] = useState([]);
+  const [reservedSeat, setReservedSeat] = useState([]);
+  const [idMovie, setIdMovie] = useState('');
+  const [selectTime, setSelectTime] = useState({});
+  const [date, setDate] = useState('');
+  const [dataMovie, setDataMovie] = useState([]);
+  useEffect(() => {
+    setIdMovie(props.route.params.params.idMovie);
+    setSelectTime(props.route.params.params.selectTime);
+    setDate(props.route.params.params.date);
+    setDataMovie(props.route.params.params.dataMovie);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // console.log(idMovie, 'sasas');
+
+  const handleSelectedSeat = data => {
+    if (selectedSeat.includes(data)) {
+      const deleteSeat = selectedSeat.filter(el => {
+        return el !== data;
+      });
+      setSelectedSeat(deleteSeat);
+    } else {
+      setSelectedSeat([...selectedSeat, data]);
+    }
+  };
+
+  const handleResetSeat = () => {
+    setSelectedSeat([]);
+  };
+
+  const handleBookingSeat = () => {
+    console.log(selectedSeat);
+  };
+
   const handlePayment = () => {
     props.navigation.navigate('AppScreen', {
       screen: 'Payment',
@@ -39,6 +76,170 @@ function Order(props) {
               height: 424,
               marginTop: 16,
             }}>
+            <View
+              style={{
+                display: 'flex',
+                backgroundColor: '#fff',
+                padding: 20,
+              }}>
+              {/* <Seat /> */}
+              <FlatList
+                data={listSeat}
+                keyExtractor={item => item}
+                renderItem={({item}) => (
+                  <Seat
+                    seatAlphabhet={item}
+                    reserved={reservedSeat}
+                    selected={selectedSeat}
+                    selectSeat={handleSelectedSeat}
+                  />
+                )}
+              />
+
+              <View style={{marginVertical: 12, marginLeft: 12}}>
+                <Text style={{color: '#000', fontSize: 16, fontWeight: '600'}}>
+                  Seating key
+                </Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  backgroundColor: '#fff',
+                  justifyContent: 'center',
+                }}>
+                <View style={{marginLeft: 12, marginRight: 24}}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      marginVertical: 12,
+                    }}>
+                    {/* <Icon
+                      name="arrow-down"
+                      size={30}
+                      color="#6e7191"
+                      style={{marginRight: 8}}
+                    /> */}
+                    <Text>A - G</Text>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      marginVertical: 12,
+                    }}>
+                    <Text
+                      style={{
+                        backgroundColor: '#D6D8E7',
+                        width: 30,
+                        height: 30,
+                        borderRadius: 4,
+                        marginRight: 8,
+                      }}
+                    />
+                    <Text>Available</Text>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      marginVertical: 12,
+                    }}>
+                    <Text
+                      style={{
+                        backgroundColor: '#F589D7',
+                        width: 30,
+                        height: 30,
+                        borderRadius: 4,
+                        marginRight: 8,
+                      }}
+                    />
+                    <Text>Love nest</Text>
+                  </View>
+                </View>
+                <View>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      marginVertical: 12,
+                    }}>
+                    {/* <Icon
+                      name="arrow-right"
+                      size={30}
+                      color="#6e7191"
+                      style={{marginRight: 8}}
+                    /> */}
+                    <Text>1 - 14</Text>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      marginVertical: 12,
+                    }}>
+                    <Text
+                      style={{
+                        backgroundColor: '#5f2eea',
+                        width: 30,
+                        height: 30,
+                        borderRadius: 4,
+                        marginRight: 8,
+                      }}
+                    />
+                    <Text>Selected</Text>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      marginVertical: 12,
+                    }}>
+                    <Text
+                      style={{
+                        backgroundColor: '#6E7191',
+                        width: 30,
+                        height: 30,
+                        borderRadius: 4,
+                        marginRight: 8,
+                      }}
+                    />
+                    <Text>Sold</Text>
+                  </View>
+                </View>
+              </View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-around',
+                  marginVertical: 12,
+                }}>
+                <TouchableOpacity
+                  onPress={handleBookingSeat}
+                  style={{
+                    backgroundColor: '#5f2eea',
+                    padding: 12,
+                    borderRadius: 4,
+                    width: 100,
+                  }}>
+                  <Text style={{color: '#fff', textAlign: 'center'}}>
+                    Booking
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={handleResetSeat}
+                  style={{
+                    backgroundColor: '#5f2eea',
+                    padding: 12,
+                    borderRadius: 4,
+                    width: 100,
+                  }}>
+                  <Text style={{color: '#fff', textAlign: 'center'}}>
+                    Reset Seat
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
             <Text
               style={{
                 marginTop: 229,
@@ -121,7 +322,7 @@ function Order(props) {
               </View>
             </View>
           </View>
-          <Text style={{fontSize: 18, color: '#14142B', marginTop: 33}}>
+          <Text style={{fontSize: 18, color: '#14142B', marginTop: 110}}>
             Order Info
           </Text>
           <View

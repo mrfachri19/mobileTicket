@@ -10,12 +10,13 @@ import {
   TouchableOpacity,
   TouchableHighlight,
   FlatList,
-  Button,
 } from 'react-native';
+import Card from '../../components/Card';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {getAllMovie} from '../../stores/actions/movie';
+import {useDispatch, useSelector} from 'react-redux';
 import axios from '../../utils/axios';
 import home from '../../assets/headhome.png';
-import spiderman from '../../assets/spiderman.png';
 import tikit from '../../assets/tiket.png';
 import ebu from '../../assets/ebu.png';
 import hiflix from '../../assets/hiflix.png';
@@ -25,49 +26,54 @@ import ig from '../../assets/ig.png';
 import fb from '../../assets/fb.png';
 import twit from '../../assets/twit.png';
 
-function Home(props) {
-  const [movie, setMovie] = useState([]);
+function Home({navigation}) {
+  const [limit] = useState(10);
+  const movie = useSelector(state => state.movie);
+  const [showModalViewAll, setShowModalViewAll] = useState(false);
+  const [search, setSearch] = useState('');
 
-  useEffect(() => {
-    // console.log(props.route.params.nama);
-    getToken();
-    getMovie();
-  }, []);
-  // useEffect(() => {
-  //   console.log(props.route.params.nama);
-  // }, []);
-  const getToken = async () => {
-    const dataToken = await AsyncStorage.getItem('token');
-    console.log(dataToken);
-    AsyncStorage.getAllKeys((err, keys) => {
-      AsyncStorage.multiGet(keys, (error, stores) => {
-        stores.map((result, i, store) => {
-          console.log({[store[i][0]]: store[i][1]});
-          return true;
-        });
-      });
-    });
-  };
+  const [selectHoverMovie, setSelectHoverMovie] = useState('');
+  const [movies, setMovies] = useState(movie.movies);
+  const disptach = useDispatch();
+
   const getMovie = async () => {
     try {
-      const result = await axios.get('/movie?page=1&limit=7');
-      setMovie(result.data.data);
-      console.log(result.data.data);
+      const response = await disptach(getAllMovie(limit));
+      setMovies(response.value.data.data);
     } catch (error) {
-      console.log(error.response);
+      new Error(error.response);
     }
   };
+
+  const handleMovieDetail = async value => {
+    await AsyncStorage.setItem('nameMovie', value.name);
+    return navigation.navigate('MovieDetail', {
+      id: value.id,
+    });
+  };
+
+  const showDescriptionMovie = id => {
+    setSelectHoverMovie(id);
+  };
+  const searchAllMovie = async () => {
+    try {
+      const response = await axios.get(`movie?searchName=${search}`);
+      setMovies(response.data.data);
+    } catch (error) {
+      setMovies([]);
+    }
+  };
+
+  useEffect(() => {
+    getMovie();
+  }, []);
+
+  const [text, onChangeText] = React.useState('Useless Text');
   const [titleText, setTitleText] = useState(' Find out now!');
   const bodyText = 'Nearest Cinema, Newest Movie,';
   const onPressTitle = () => {
-    setTitleText("Bird's Nest [pressed]");
+    setTitleText('moviegoers');
   };
-  const handleMovieDetail = () => {
-    props.navigation.navigate('MovieDetail');
-  };
-
-  const [text, onChangeText] = React.useState('Useless Text');
-
   return (
     <>
       <ScrollView style={styles.scrollView}>
@@ -85,39 +91,81 @@ function Home(props) {
             <Text style={{flex: 3, color: '#14142B', fontSize: 18}}>
               Now Showing
             </Text>
-            <Text style={{flex: 1, color: '#5F2EEA', fontSize: 14}}>
+            <Text
+              style={{flex: 1, color: '#5F2EEA', fontSize: 14}}
+              onPress={() => setShowModalViewAll(true)}>
               view all
             </Text>
           </View>
-          <View style={{flexDirection: 'row', marginTop: 32}}>
-            <ScrollView horizontal={true}>
-              <View>
-                <FlatList
-                  horizontal
-                  data={movie}
-                  renderItem={({item}) => (
-                    <View style={styles.card}>
-                      <Image
-                        style={styles.cardImage}
-                        source={{
-                          uri: `http://192.168.43.99:3001/uploads/movie/${item.image}`,
-                        }}
-                      />
-                      <Text style={styles.title}>{item.name}</Text>
-                      <Text style={styles.tagline}>{item.category}</Text>
-                      <TouchableHighlight style={styles.buttondetail}>
-                        <Text
-                          style={styles.textdetail}
-                          onPress={handleMovieDetail}>
-                          Detail
-                        </Text>
-                      </TouchableHighlight>
-                    </View>
-                  )}
-                  keyExtractor={item => item.id}
-                />
-              </View>
-            </ScrollView>
+          <View style={styles.homeRows_listmovie}>
+            <View>
+              <FlatList
+                horizontal
+                contentContainerStyle={styles.homeRows_listmovie_column_card}
+                data={movies}
+                renderItem={({item: value}) => (
+                  <Card index={value.id} key={value.id}>
+                    <TouchableHighlight
+                      underlayColor="none"
+                      onPress={() => showDescriptionMovie(value.id)}>
+                      <View
+                        style={{
+                          height: selectHoverMovie === value.id ? 320 : 220,
+                        }}>
+                        <Image
+                          source={{
+                            uri: `https://backend-fachri.fwebdev2.xyz/uploads/movie/${value.image}`,
+                          }}
+                          style={styles.homeRows_listmovie_card_image}
+                        />
+                        {selectHoverMovie === value.id && (
+                          <View
+                            style={{
+                              flexDirection: 'column',
+                            }}>
+                            <Text
+                              style={
+                                styles.homeRows_listMovie_card_hover_title_movie
+                              }
+                              numberOfLines={1}
+                              ellipsizeMode="tail">
+                              {value.name}
+                            </Text>
+                            <Text
+                              style={
+                                styles.homeRows_listMovie_card_hover_title_category
+                              }>
+                              {value.category}
+                            </Text>
+                            <TouchableHighlight
+                              underlayColor="none"
+                              style={{
+                                borderColor: '#5F2EEA',
+                                borderWidth: 0.5,
+                                borderStyle: 'solid',
+                                paddingVertical: 5,
+                                paddingHorizontal: 40,
+                                marginTop: 33,
+                                borderRadius: 4,
+                              }}
+                              onPress={() => handleMovieDetail(value)}>
+                              <Text
+                                style={{
+                                  color: '#5F2EEA',
+                                  fontWeight: '300',
+                                  fontSize: 10,
+                                }}>
+                                Details
+                              </Text>
+                            </TouchableHighlight>
+                          </View>
+                        )}
+                      </View>
+                    </TouchableHighlight>
+                  </Card>
+                )}
+              />
+            </View>
           </View>
           <View style={{flexDirection: 'row', marginTop: 100}}>
             <Text style={{flex: 3, color: '#14142B', fontSize: 18}}>
@@ -157,7 +205,7 @@ function Home(props) {
                       <Image
                         style={styles.cardImage}
                         source={{
-                          uri: `http://192.168.43.99:3001/uploads/movie/${item.image}`,
+                          uri: `https://backend-fachri.fwebdev2.xyz/uploads/movie/${item.image}`,
                         }}
                       />
                       <Text style={styles.title}>{item.name}</Text>
@@ -371,5 +419,81 @@ const styles = StyleSheet.create({
     width: 120,
     height: 185,
   },
+  // =================
+  homeRows_listmovie_column: {
+    marginTop: 215,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  homeRows_listmovie_column_title: {
+    fontSize: 18,
+    fontWeight: '500',
+    color: '#14142B',
+  },
+  homeRows_listmovie_column_ShowAll: {
+    color: '#5F2EEA',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  homeRows_listmovie_column_card: {
+    flexDirection: 'row',
+  },
+  homeRows_listmovie_column_card_modal: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  homeRows_listmovie_card_image: {
+    resizeMode: 'contain',
+    borderRadius: 24,
+    width: 122,
+    height: 205,
+  },
+
+  homeRows_SubscribeMain: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    elevation: 16,
+    borderRadius: 8,
+    marginTop: 70,
+  },
+  homeRows_Subscribe_title: {
+    fontSize: 14,
+    color: '#4E4B66',
+    fontWeight: '400',
+    marginTop: 48,
+  },
+  homeRows_Subscribe_title_active: {
+    fontSize: 32,
+    color: '#5F2EEA',
+    fontWeight: '600',
+  },
+  homeRows_Subscribe_input: {
+    borderRadius: 12,
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: '#DEDEDE',
+    width: '85%',
+    marginTop: 42,
+    marginHorizontal: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+  },
+  homeRows_listMovie_card_hover_title_movie: {
+    color: '#14142B',
+    fontSize: 14,
+    width: 120,
+    textAlign: 'center',
+    marginTop: 12,
+    fontWeight: '600',
+  },
+  homeRows_listMovie_card_hover_title_category: {
+    color: '#A0A3BD',
+    fontSize: 11,
+    textAlign: 'center',
+    marginTop: 4,
+  },
 });
+
 export default Home;

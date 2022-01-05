@@ -12,30 +12,29 @@ import {
 import tiket from '../../assets/Vector.png';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from '../../utils/axios';
-import {connect} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {login} from '../../stores/actions/auth';
-import {getUserById} from '../../stores/actions/user';
+import Toast from 'react-native-simple-toast';
 
 function Login(props) {
   const [form, setForm] = useState({email: '', password: ''});
+  const dispatch = useDispatch();
   const handleLogin = async () => {
     try {
       // const result = await axios.post('/auth/login', form);
-      const result = await props.login(form);
-
+      const result = await dispatch(login(form));
+      console.log('login berhasil', result);
       await AsyncStorage.setItem('token', result.value.data.data.token);
       await AsyncStorage.setItem(
         'refreshToken',
         result.value.data.data.refreshToken,
       );
-      await props.getUserById(result.value.data.data.id);
+      await AsyncStorage.setItem('id', result.value.data.data.id);
       props.navigation.navigate('AppScreen', {
         screen: 'Home',
-        params: {
-          nama: 'Fachri Maulana',
-        },
       });
     } catch (error) {
+      Toast.show(error.response.data.msg);
       console.log(error);
     }
   };
@@ -66,7 +65,6 @@ function Login(props) {
         <TextInput
           style={styles.input}
           onChangeText={text => handleInput(text, 'password')}
-          secureTextEntry={true}
           placeholder="Enter Password"
         />
         <View style={styles.btn}>
@@ -134,11 +132,4 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = state => ({
-  auth: state.auth,
-  user: state.user,
-});
-
-const mapDispatchToProps = {login, getUserById};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default Login;

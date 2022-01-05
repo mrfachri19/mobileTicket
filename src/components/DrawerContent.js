@@ -17,23 +17,17 @@ class DrawerContent extends React.Component {
     return (
       <View style={styles.container}>
         <DrawerContentScrollView {...this.props}>
-          <View style={styles.containerProfile}>
+          {/* <View style={styles.containerProfile}>
             <View style={styles.avatar} />
             <View style={styles.biodata}>
               <Text style={styles.title}>Fachri Maulana</Text>
               <Text style={styles.caption}>@Mr. Taro</Text>
             </View>
-          </View>
+          </View> */}
           <DrawerItemList {...this.props} />
         </DrawerContentScrollView>
         <View style={styles.containerSection}>
-          <DrawerItem
-            label="Sign Out"
-            icon={({color, size}) => (
-              <Icon color={color} size={size} name="log-out" />
-            )}
-            onPress={this.handleLogout}
-          />
+          <DrawerItem label="Sign Out" onPress={this.handleLogout} />
         </View>
       </View>
     );

@@ -1,8 +1,11 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {URL_BACKEND} from '@env';
+
+console.log(URL_BACKEND);
 
 const axiosApiIntaces = axios.create({
-  baseURL: 'http://192.168.43.99:3001',
+  baseURL: 'https://backend-fachri.fwebdev2.xyz/',
 });
 
 const setToken = async (token, refreshToken) => {
@@ -19,33 +22,28 @@ const removeToken = async () => {
   } catch (error) {}
 };
 
-// Add a request interceptor
 axiosApiIntaces.interceptors.request.use(
   async function (config) {
     const token = await AsyncStorage.getItem('token');
-    // Do something before request is sent
+
     config.headers = {
       Authorization: `Bearer ${token}`,
     };
+
     return config;
   },
   function (error) {
-    // Do something with request error
     return Promise.reject(error);
   },
 );
 
-// Add a response interceptor
 axiosApiIntaces.interceptors.response.use(
   function (response) {
-    // Any status code that lie within the range of 2xx cause this function to trigger
-    // Do something with response data
     return response;
   },
   async function (error) {
     const refreshToken = await AsyncStorage.getItem('refreshToken');
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
+
     if (error.response.status === 403) {
       if (error.response.data.msg === 'jwt expired') {
         axiosApiIntaces
@@ -60,6 +58,7 @@ axiosApiIntaces.interceptors.response.use(
         removeToken();
       }
     }
+
     return Promise.reject(error);
   },
 );
