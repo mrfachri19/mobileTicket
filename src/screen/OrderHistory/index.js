@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   View,
   Text,
@@ -6,8 +6,14 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  TouchableHighlight,
 } from 'react-native';
-
+import {useState} from 'react/cjs/react.development';
+import axios from '../../utils/axios';
+import {getUser} from '../../stores/actions/user';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useDispatch, useSelector} from 'react-redux';
+import Notification from '../Notification/notif';
 import elips from '../../assets/ebu.png';
 import tikit from '../../assets/tiket.png';
 import ebu from '../../assets/ebu.png';
@@ -18,7 +24,70 @@ import ig from '../../assets/ig.png';
 import fb from '../../assets/fb.png';
 import twit from '../../assets/twit.png';
 
-function Profile() {
+function Profile({navigation}) {
+  const user = useSelector(state => state.user);
+  const userInformation = user.users[0];
+  const [users, setUsers] = useState([]);
+  const dispatch = useDispatch();
+  const [orderHistories, setOrderHistories] = useState([]);
+  const [dataBooking, setDataBooking] = useState([]);
+  console.log(orderHistories);
+  const getOrderHistoryUserBuyTicket = async () => {
+    try {
+      const response = await axios.get('booking/user-id');
+      const filterStatusSuccess = response.data.data.filter(
+        value => value.statusPayment === 'pending',
+      );
+      setOrderHistories(filterStatusSuccess);
+    } catch (error) {
+      new Error(error.response);
+    }
+  };
+
+  const getDataUser = async () => {
+    try {
+      const response = await axios.get('user');
+      setUsers(response.data.data[0]);
+    } catch (error) {
+      setUsers([]);
+      new Error(error.response);
+    }
+  };
+
+  useEffect(() => {
+    async function getTicketActive() {
+      const response = await axios.get('booking/user-id');
+      const ticketActive = response.data.data.filter(
+        value => value.statusUsed === 'active',
+      );
+      Notification.reminderSomeTicket(
+        `Hello ${userInformation.firstName} ${userInformation.lastName}`,
+        `You Have ${ticketActive.length} Ticket to use, happy watching!`,
+      );
+    }
+    getTicketActive();
+    getOrderHistoryUserBuyTicket();
+    getDataUser();
+    dispatch(getUser());
+  }, []);
+
+  const handlerUsedTicket = async (id, nameMovie) => {
+    try {
+      await axios.get(`booking/ticket/${id}`);
+      await AsyncStorage.setItem('title', nameMovie);
+      console.log(nameMovie);
+      dispatch(setDataTicketBooking(id));
+      setTimeout(() => {
+        navigation.navigate('TicketResult', {
+          setDetailTicketBooking: dataBooking,
+        });
+        getOrderHistoryUserBuyTicket();
+      }, 1500);
+    } catch (error) {
+      new Error(error.response);
+    }
+  };
+
   return (
     <>
       <View
@@ -41,66 +110,58 @@ function Profile() {
       <ScrollView style={styles.scrollView}>
         <View style={styles.containerprofile}>
           <View style={styles.borderinfo}>
-            <View>
-              <Image source={elips} />
-            </View>
-            <Text
-              style={{
-                fontSize: 13,
-                fontFamily: 'mulish',
-                color: '#AAAAAA',
-                marginTop: 17,
-              }}>
-              Monday, 14 June 2020 - 02:00pm
-            </Text>
-            <Text style={{marginTop: 18, fontSize: 18, color: '#000000'}}>
-              Spiderman Homecoming
-            </Text>
-            <View
-              style={{
-                borderWidth: 0.5,
-                borderColor: '#DEDEDE',
-                marginTop: 32,
-                marginBottom: 24,
-              }}
-            />
-            <TouchableOpacity style={styles.buttonCheckout}>
+            {orderHistories.length > 0 ? (
+              orderHistories.map(item => (
+                <View style={styles.profile_card_orderHistory} key={item.id}>
+                  <View style={styles.profile_card_orderHistory_body}>
+                    <Text style={styles.profile_card_orderHistory_date}>
+                      {new Date(item.dateBooking).toDateString()} -{' '}
+                      {item.timeBooking.substring(0, 5) >= 18
+                        ? `${item.timeBooking.substring(0, 5)}pm`
+                        : `${item.timeBooking.substring(0, 5)}am`}
+                    </Text>
+                    <Text style={styles.profile_card_orderHistory_movie}>
+                      {item.title}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      borderColor: '#DEDEDE',
+                      borderWidth: 1,
+                      borderStyle: 'solid',
+                      marginBottom: 24,
+                    }}></View>
+                  <TouchableHighlight
+                    underlayColor="none"
+                    onPress={() =>
+                      item.statusUsed === 'active'
+                        ? handlerUsedTicket(item.id, item.title)
+                        : null
+                    }
+                    style={
+                      item.statusUsed === 'active'
+                        ? styles.profile_card_orderHistory_button_active
+                        : styles.profile_card_orderHistory_button_used
+                    }>
+                    <Text style={styles.profile_card_orderHistory_button_title}>
+                      {item.statusUsed === 'active'
+                        ? 'Ticket in active'
+                        : 'Ticket Already used'}
+                    </Text>
+                  </TouchableHighlight>
+                </View>
+              ))
+            ) : (
               <Text
-                style={{textAlign: 'center', fontSize: 14, color: '#F7F7FC'}}>
-                Tickitz in Active
+                style={{
+                  fontSize: 28,
+                  color: '#000000',
+                  textAlign: 'center',
+                  marginTop: 20,
+                }}>
+                Order is Empty.
               </Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.borderinfo}>
-            <View>
-              <Image source={elips} />
-            </View>
-            <Text
-              style={{
-                fontSize: 13,
-                fontFamily: 'mulish',
-                color: '#AAAAAA',
-                marginTop: 17,
-              }}>
-              Monday, 14 June 2020 - 02:00pm
-            </Text>
-            <Text style={{marginTop: 18, fontSize: 18, color: '#000000'}}>
-              Spiderman Homecoming
-            </Text>
-            <View
-              style={{
-                borderWidth: 0.5,
-                borderColor: '#DEDEDE',
-                marginTop: 32,
-                marginBottom: 24,
-              }}
-            />
-            <TouchableOpacity style={styles.buttonCheckouts}>
-              <Text
-                style={{textAlign: 'center', fontSize: 14, color: '#F7F7FC'}}>
-                Tickitz in Used
-              </Text>
-            </TouchableOpacity>
+            )}
           </View>
         </View>
         <View
@@ -212,6 +273,55 @@ const styles = StyleSheet.create({
     padding: 11,
     backgroundColor: '#6E7191',
     borderRadius: 8,
+  },
+  profile_card_orderHistory: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    elevation: 1,
+    marginTop: 32,
+  },
+  profile_card_orderHistory_body: {
+    padding: 25,
+  },
+  profile_card_orderHistory_image: {
+    width: 50.72,
+    height: 17.08,
+    resizeMode: 'contain',
+  },
+  profile_card_orderHistory_date: {
+    marginTop: 18,
+    color: '#AAAAAA',
+    fontSize: 13,
+    fontWeight: '400',
+    marginBottom: 4,
+  },
+  profile_card_orderHistory_movie: {
+    fontSize: 18,
+    marginTop: 4,
+    fontWeight: '600',
+    color: '#000000',
+  },
+  profile_card_orderHistory_button_title: {
+    fontWeight: '700',
+    fontSize: 14,
+    color: '#F7F7FC',
+    textAlign: 'center',
+  },
+  profile_card_orderHistory_button_active: {
+    backgroundColor: '#00BA88',
+    borderRadius: 8,
+    paddingVertical: 12,
+    marginHorizontal: 24,
+    marginTop: 24,
+    marginBottom: 32,
+  },
+  profile_card_orderHistory_button_used: {
+    backgroundColor: '#6E7191',
+    borderRadius: 8,
+    paddingVertical: 12,
+    marginHorizontal: 24,
+    marginTop: 24,
+    marginBottom: 32,
   },
 });
 

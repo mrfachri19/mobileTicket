@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
+  Pressable,
 } from 'react-native';
 import ovo from '../../assets/ovo.png';
 import gopay from '../../assets/gopay.png';
@@ -22,16 +23,78 @@ import yt from '../../assets/yt.png';
 import ig from '../../assets/ig.png';
 import fb from '../../assets/fb.png';
 import twit from '../../assets/twit.png';
+import {getUser} from '../../stores/actions/user';
+import {useSelector, useDispatch} from 'react-redux';
+import axios from '../../utils/axios';
 
-function Payment(props) {
-  const [text, onChangeText] = React.useState('Jon Don Bosco');
-  const [email, onChangeEmail] = React.useState(
-    'jondonpablopatricio@gmail.com',
+function Payment({navigation, route}) {
+  const user = useSelector(state => state.user);
+  const dispatch = useDispatch();
+  const profileUser = user.users[0];
+  const [fullname, setFullName] = useState(
+    `${profileUser.firstName} ${profileUser.lastName}`,
   );
-  const [number, onChangeNumber] = React.useState(null);
-  const handleTicketResult = () => {
-    props.navigation.navigate('TicketResult');
+  const [email, setEmail] = useState(profileUser.email);
+  const [noTelp, setPhoneNumber] = useState(profileUser.noTelp);
+  const [modalVisibile, setModalVisible] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('');
+  const [selectedMidtrans, setSelectedMidtrans] = useState('');
+  const detailOrder = route.params;
+
+  console.log(detailOrder);
+
+  const [userAlreadyBooking, setUserAlreadyBooking] = useState('');
+
+  const PopUpTransferPayment = paymentMethod => {
+    setPaymentMethod(paymentMethod);
+    setModalVisible(true);
   };
+
+  const selectedPaymentMidtrans = midtransText => {
+    setSelectedMidtrans(midtransText);
+  };
+
+  const cancelSelectedPaymentMidtrans = () => {
+    setSelectedMidtrans('');
+  };
+
+  const createBooking = async () => {
+    try {
+      const {userId, movieId, scheduleId, seat, timeBooking, dateBooking} =
+        detailOrder;
+      const setDataBooking = {
+        userId,
+        movieId,
+        scheduleId,
+        seat,
+        timeBooking,
+        dateBooking,
+        paymentMethod: '',
+      };
+
+      const response = await axios.post('seat/', setDataBooking);
+      setUserAlreadyBooking('ready');
+
+      return navigation.navigate('Midtrans', {
+        redirectUrl: response.data.data.redirect_url,
+      });
+    } catch (error) {
+      new Error(error.resposne);
+      console.log(error.response);
+    }
+  };
+
+  useEffect(() => {
+    if (userAlreadyBooking === 'ready') {
+      return navigation.navigate('Profile');
+    }
+    dispatch(getUser());
+  }, []);
+
+  // console.log(userAlreadyBooking);
+  // const handleTicketResult = () => {
+  //   props.navigation.navigate('TicketResult');
+  // };
   return (
     <>
       <View
@@ -46,13 +109,137 @@ function Payment(props) {
         <Text style={{flex: 6, fontSize: 16, color: '#AAAAAA'}}>
           Total payment
         </Text>
-        <Text style={{fontSize: 20, color: '#14142B'}}>$30.00</Text>
+        <Text style={{fontSize: 20, color: '#14142B'}}>
+          {' '}
+          Rp{detailOrder.totalPayment}
+        </Text>
       </View>
       <ScrollView style={styles.scrollView}>
         <View style={styles.container}>
           <Text style={{marginTop: 40, fontSize: 18, color: '#14142B'}}>
             Payment Method
           </Text>
+          <View style={styles.payment_card_method}>
+            {selectedMidtrans !== 'midtrans' ? (
+              <>
+                <View style={styles.payment_card_method_body}>
+                  <Pressable onPress={() => PopUpTransferPayment('Gopay')}>
+                    <View
+                      style={
+                        paymentMethod === 'Gopay'
+                          ? styles.payment_card_method_body_border_active
+                          : styles.payment_card_method_body_border
+                      }>
+                      <Image source={gopay} />
+                    </View>
+                  </Pressable>
+                  <Pressable onPress={() => PopUpTransferPayment('Ovo')}>
+                    <View
+                      style={
+                        paymentMethod === 'Ovo'
+                          ? styles.payment_card_method_body_border_active
+                          : styles.payment_card_method_body_border
+                      }>
+                      <Image source={ovo} />
+                    </View>
+                  </Pressable>
+                  <Pressable onPress={() => PopUpTransferPayment('Paypal')}>
+                    <View
+                      style={
+                        paymentMethod === 'Paypal'
+                          ? styles.payment_card_method_body_border_active
+                          : styles.payment_card_method_body_border
+                      }>
+                      <Image source={paypal} />
+                    </View>
+                  </Pressable>
+                  <Pressable onPress={() => PopUpTransferPayment('GooglePay')}>
+                    <View
+                      style={
+                        paymentMethod === 'GooglePay'
+                          ? styles.payment_card_method_body_border_active
+                          : styles.payment_card_method_body_border
+                      }>
+                      <Image source={gpay} />
+                    </View>
+                  </Pressable>
+                  <Pressable onPress={() => PopUpTransferPayment('BCA')}>
+                    <View
+                      style={
+                        paymentMethod === 'BCA'
+                          ? styles.payment_card_method_body_border_active
+                          : styles.payment_card_method_body_border
+                      }>
+                      <Image source={visa} />
+                    </View>
+                  </Pressable>
+                  <Pressable onPress={() => PopUpTransferPayment('BRI')}>
+                    <View
+                      style={
+                        paymentMethod === 'BRI'
+                          ? styles.payment_card_method_body_border_active
+                          : styles.payment_card_method_body_border
+                      }>
+                      <Image source={dana} />
+                    </View>
+                  </Pressable>
+                </View>
+
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    marginTop: 36,
+                  }}>
+                  <View style={styles.payment_card_method_question_line}></View>
+                  <View>
+                    <Text style={styles.payment_card_method_question_title}>
+                      or
+                    </Text>
+                  </View>
+                  <View style={styles.payment_card_method_question_line}></View>
+                </View>
+              </>
+            ) : null}
+
+            <View
+              style={
+                selectedMidtrans === 'midtrans'
+                  ? styles.payment_card_method_viaMidtrans_selected
+                  : styles.payment_card_method_viaMidtrans
+              }>
+              <Text
+                style={
+                  selectedMidtrans === 'midtrans'
+                    ? styles.payment_card_method_title_viaMidtrans_active_selected
+                    : styles.payment_card_method_title_viaMidtrans
+                }
+                onPress={() => selectedPaymentMidtrans('midtrans')}>
+                Midtrans Payment
+              </Text>
+            </View>
+            {selectedMidtrans === 'midtrans' ? (
+              <Text
+                style={styles.payment_card_method_title_viaMidtrans_cancel}
+                onPress={cancelSelectedPaymentMidtrans}>
+                Cancel
+              </Text>
+            ) : null}
+
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                marginTop: 36,
+              }}>
+              <Text style={styles.payment_card_method_title_viaCash}>
+                Pay via cash.
+              </Text>
+              <Text style={styles.payment_card_method_title_viaCash_active}>
+                See how it work
+              </Text>
+            </View>
+          </View>
           <View
             style={{
               backgroundColor: 'white',
@@ -128,8 +315,9 @@ function Payment(props) {
             </Text>
             <TextInput
               style={styles.input}
-              onChangeText={onChangeText}
-              value={text}
+              keyboardType="default"
+              onChangeText={fullnameText => setFullName(fullnameText)}
+              value={fullname}
               placeholder="Jhon Don Bosco"
               keyboardType="text"
             />
@@ -144,7 +332,8 @@ function Payment(props) {
             </Text>
             <TextInput
               style={styles.input}
-              onChangeText={onChangeEmail}
+              keyboardType="email-address"
+              onChangeText={emailText => setEmail(emailText)}
               value={email}
               placeholder="jonexample@gmail.com"
               keyboardType="text"
@@ -160,8 +349,8 @@ function Payment(props) {
             </Text>
             <TextInput
               style={styles.input}
-              onChangeText={onChangeNumber}
-              value={number}
+              onChangeText={phoneText => setPhoneNumber(phoneText)}
+              value={noTelp}
               placeholder="+62"
               keyboardType="numeric"
             />
@@ -169,7 +358,7 @@ function Payment(props) {
           <TouchableOpacity style={styles.buttonCheckout}>
             <Text
               style={{textAlign: 'center', fontSize: 14, color: '#F7F7FC'}}
-              onPress={handleTicketResult}>
+              onPress={createBooking}>
               Pay Your Order
             </Text>
           </TouchableOpacity>
@@ -282,6 +471,123 @@ const styles = StyleSheet.create({
     padding: 11,
     backgroundColor: '#5F2EEA',
     borderRadius: 16,
+  },
+  paymentMain: {
+    flexGrow: 1,
+    backgroundColor: '#EFF0F6',
+  },
+  payment_header_total: {
+    backgroundColor: '#FFFFFF',
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  payment_header_total_title: {
+    marginHorizontal: 24,
+    color: '#AAAAAA',
+    fontSize: 16,
+    marginTop: 18,
+    marginBottom: 18,
+  },
+  payment_method_container: {
+    marginTop: 40,
+  },
+  payment_header_total_title_price: {
+    marginHorizontal: 24,
+    marginTop: 18,
+    marginBottom: 18,
+    color: '#14142B',
+    fontWeight: '600',
+    fontSize: 20,
+  },
+  payment_title_method: {
+    color: '#14142B',
+    fontWeight: '600',
+    fontSize: 18,
+  },
+  payment_card_method: {
+    marginTop: 16,
+    paddingVertical: 32,
+    paddingHorizontal: 18,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+  },
+  payment_card_method_body: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  payment_card_method_image: {
+    width: 50,
+    height: 16,
+    resizeMode: 'contain',
+  },
+  payment_card_method_body_border: {
+    borderWidth: 0.5,
+    borderStyle: 'solid',
+    marginTop: 16,
+    borderColor: '#DEDEDE',
+    borderRadius: 8,
+    paddingHorizontal: 15,
+    paddingVertical: 9,
+    marginHorizontal: 5,
+  },
+  payment_card_method_body_border_active: {
+    borderWidth: 1,
+    borderStyle: 'solid',
+    marginTop: 16,
+    borderColor: '#5F2EEA',
+    borderRadius: 8,
+    paddingHorizontal: 15,
+    paddingVertical: 9,
+    marginHorizontal: 5,
+  },
+
+  payment_card_method_question_title: {
+    color: '#A0A3BD',
+    fontSize: 14,
+    marginHorizontal: 41,
+  },
+  payment_card_method_question_line: {
+    backgroundColor: '#DEDEDE',
+    height: 1,
+    marginTop: 10,
+    width: '30%',
+  },
+  payment_card_method_title_viaCash: {
+    color: '#6E7191',
+    fontSize: 14,
+  },
+  payment_card_method_title_viaCash_active: {
+    color: '#5F2EEA',
+    fontSize: 14,
+    marginHorizontal: 5,
+  },
+  payment_card_method_title_viaMidtrans_active_selected: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    marginHorizontal: 5,
+  },
+  payment_card_method_viaMidtrans_selected: {
+    padding: 4,
+    backgroundColor: '#5F2EEA',
+    borderRadius: 4,
+    width: '50%',
+    marginHorizontal: 70,
+  },
+  payment_card_method_title_viaMidtrans: {
+    color: '#5F2EEA',
+    fontSize: 14,
+    marginTop: 10,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  payment_card_method_title_viaMidtrans_cancel: {
+    fontWeight: 'bold',
+    color: '#000000',
+    marginTop: 10,
+    textAlign: 'center',
   },
 });
 export default Payment;

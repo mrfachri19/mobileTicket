@@ -1,30 +1,65 @@
-const initialState = {
-  user: {},
-  msg: '',
+const globalState = {
+  users: [],
+  setDataTicket: {},
+  loading: false,
+  error: false,
+  message: '',
 };
 
-const getUserById = (state = initialState, action) => {
+export default function user(state = globalState, action) {
   switch (action.type) {
-    case 'GET_USER_BY_ID_PENDING': {
+    case 'GETUSER_PENDING': {
       return {
         ...state,
+        loading: false,
+        error: false,
+        message: '',
       };
     }
-    case 'GET_USER_BY_ID_FULFILLED': {
+    case 'GETUSER_FULFILLED': {
       return {
         ...state,
-        user: action.payload.data.data[0],
+        loading: false,
+        error: false,
+        users: action.payload.data.data,
+        message: action.payload.data.message,
       };
     }
-    case 'GET_USER_BY_ID_REJECTED': {
+    case 'GETUSER_REJECTED': {
       return {
         ...state,
+        loading: false,
+        error: false,
+        message: action.payload.response.data.message,
+      };
+    }
+    case 'SETDATATICKETBOOKING_PENDING': {
+      return {
+        ...state,
+        loading: false,
+        error: false,
+        message: '',
+      };
+    }
+    case 'SETDATATICKETBOOKING_FULFILLED': {
+      return {
+        ...state,
+        loading: false,
+        error: false,
+        setDataTicket: action.payload.data.data,
+        message: action.payload.data.message,
+      };
+    }
+    case 'SETDATATICKETBOOKING_REJECTED': {
+      return {
+        ...state,
+        loading: false,
+        error: false,
+        message: action.payload.response.data.message,
       };
     }
     default: {
       return state;
     }
   }
-};
-
-export default getUserById;
+}

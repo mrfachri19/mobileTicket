@@ -13,6 +13,7 @@ import Payment from '../screen/Payment';
 import TicketResult from '../screen/TicketResult';
 import Profile from '../screen/Profile';
 import OrderHistory from '../screen/OrderHistory';
+import Midtrans from '../screen/Midtrans';
 
 import DrawerContent from '../components/DrawerContent';
 
@@ -32,6 +33,31 @@ function HomeNavigator() {
       <Stack.Screen
         component={Order}
         name="Order"
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        component={Payment}
+        name="Payment"
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Midtrans"
+        component={Midtrans}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        component={TicketResult}
+        name="TicketResult"
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        component={Profile}
+        name="Profile"
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        component={OrderHistory}
+        name="OrderHistory"
         options={{headerShown: false}}
       />
     </Stack.Navigator>

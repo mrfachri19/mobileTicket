@@ -6,7 +6,6 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  FlatList,
 } from 'react-native';
 import right from '../../assets/rightarrow.png';
 import buttom from '../../assets/buttomarrow.png';
@@ -20,48 +19,89 @@ import ig from '../../assets/ig.png';
 import fb from '../../assets/fb.png';
 import twit from '../../assets/twit.png';
 import Seat from '../../components/Seat';
-function Order(props) {
-  const listSeat = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
-  const [selectedSeat, setSelectedSeat] = useState([]);
-  const [reservedSeat, setReservedSeat] = useState([]);
-  const [idMovie, setIdMovie] = useState('');
-  const [selectTime, setSelectTime] = useState({});
-  const [date, setDate] = useState('');
-  const [dataMovie, setDataMovie] = useState([]);
-  useEffect(() => {
-    setIdMovie(props.route.params.params.idMovie);
-    setSelectTime(props.route.params.params.selectTime);
-    setDate(props.route.params.params.date);
-    setDataMovie(props.route.params.params.dataMovie);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import IconClose from 'react-native-vector-icons/Ionicons';
+import {getUser} from '../../stores/actions/user';
+import axios from '../../utils/axios';
+import {useSelector, useDispatch} from 'react-redux';
 
-  // console.log(idMovie, 'sasas');
+function Order({navigation, route}) {
+  const dispatch = useDispatch();
+  const [questionSeat, setQuestionSeat] = useState(false);
+  const [userSeats, setUserSeats] = useState([]);
+  const [soldSeat, setSoldSeat] = useState([]);
+  const user = useSelector(state => state.user);
+  const detailUser = user.users[0];
 
-  const handleSelectedSeat = data => {
-    if (selectedSeat.includes(data)) {
-      const deleteSeat = selectedSeat.filter(el => {
-        return el !== data;
-      });
-      setSelectedSeat(deleteSeat);
-    } else {
-      setSelectedSeat([...selectedSeat, data]);
+  const {detailOrder} = route.params;
+
+  const orderDetail = detailOrder[0];
+  console.log(orderDetail);
+
+  const {date, dateBooking, movieId, nameMovie, premiere, scheduleId, time} =
+    orderDetail;
+
+  const listAlphabet = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+  const userBookSoldSeat = async () => {
+    try {
+      const response = await axios.get(
+        `booking?scheduleId=${scheduleId}&movieId=${movieId}&dateBooking=${dateBooking}&timeBooking=${time}`,
+      );
+      const seat = response.data.data.map(value => value.seat);
+      setSoldSeat(seat);
+    } catch (error) {
+      new Error(error);
     }
   };
 
-  const handleResetSeat = () => {
-    setSelectedSeat([]);
-  };
+  useEffect(() => {
+    dispatch(getUser());
+    userBookSoldSeat();
+  }, []);
 
-  const handleBookingSeat = () => {
-    console.log(selectedSeat);
+  const chooseSeats = seat => {
+    if (userSeats.includes(seat)) {
+      const cancelSeat = userSeats.filter(value => value !== seat);
+      setUserSeats(cancelSeat);
+    } else if (userSeats.length === 10) {
+      Alert.alert('Message', 'Are you sure you booked more than 10 seats?', [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+          onPress: () => {
+            setUserSeats([...userSeats]);
+          },
+        },
+        {
+          text: 'OK',
+          onPress: () => {
+            setUserSeats([...userSeats, seat]);
+          },
+        },
+      ]);
+    } else {
+      setUserSeats([...userSeats, seat]);
+    }
   };
-
-  const handlePayment = () => {
-    props.navigation.navigate('AppScreen', {
-      screen: 'Payment',
+  const goToCheckout = () => {
+    navigation.navigate('Payment', {
+      userId: detailUser.id, // from redux
+      movieId: movieId,
+      nameMovie: nameMovie,
+      scheduleId: scheduleId,
+      dateBooking: dateBooking,
+      timeBooking: time,
+      seat: userSeats,
+      totalPayment: `${userSeats.length * 70000}`,
     });
+    console.log(scheduleId);
   };
+
+  const ClearSeats = () => {
+    setUserSeats([]);
+  };
+
   return (
     <>
       <ScrollView style={styles.scrollView}>
@@ -73,7 +113,7 @@ function Order(props) {
             style={{
               backgroundColor: 'white',
               borderRadius: 16,
-              height: 424,
+              height: 400,
               marginTop: 16,
             }}>
             <View
@@ -83,18 +123,18 @@ function Order(props) {
                 padding: 20,
               }}>
               {/* <Seat /> */}
-              <FlatList
-                data={listSeat}
-                keyExtractor={item => item}
-                renderItem={({item}) => (
-                  <Seat
-                    seatAlphabhet={item}
-                    reserved={reservedSeat}
-                    selected={selectedSeat}
-                    selectSeat={handleSelectedSeat}
-                  />
-                )}
-              />
+              <View style={styles.Seat_SeatsContainer}>
+                {listAlphabet.map((value, idx) => (
+                  <View key={idx}>
+                    <Seat
+                      keyAlphabet={value}
+                      selectedSeats={userSeats}
+                      soldSeats={soldSeat}
+                      chooseSeats={chooseSeats}
+                    />
+                  </View>
+                ))}
+              </View>
 
               <View style={{marginVertical: 12, marginLeft: 12}}>
                 <Text style={{color: '#000', fontSize: 16, fontWeight: '600'}}>
@@ -114,12 +154,12 @@ function Order(props) {
                       alignItems: 'center',
                       marginVertical: 12,
                     }}>
-                    {/* <Icon
+                    <Icon
                       name="arrow-down"
-                      size={30}
+                      size={15}
                       color="#6e7191"
                       style={{marginRight: 8}}
-                    /> */}
+                    />
                     <Text>A - G</Text>
                   </View>
                   <View
@@ -164,12 +204,12 @@ function Order(props) {
                       alignItems: 'center',
                       marginVertical: 12,
                     }}>
-                    {/* <Icon
+                    <Icon
                       name="arrow-right"
-                      size={30}
+                      size={15}
                       color="#6e7191"
                       style={{marginRight: 8}}
-                    /> */}
+                    />
                     <Text>1 - 14</Text>
                   </View>
                   <View
@@ -213,32 +253,7 @@ function Order(props) {
                   flexDirection: 'row',
                   justifyContent: 'space-around',
                   marginVertical: 12,
-                }}>
-                <TouchableOpacity
-                  onPress={handleBookingSeat}
-                  style={{
-                    backgroundColor: '#5f2eea',
-                    padding: 12,
-                    borderRadius: 4,
-                    width: 100,
-                  }}>
-                  <Text style={{color: '#fff', textAlign: 'center'}}>
-                    Booking
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={handleResetSeat}
-                  style={{
-                    backgroundColor: '#5f2eea',
-                    padding: 12,
-                    borderRadius: 4,
-                    width: 100,
-                  }}>
-                  <Text style={{color: '#fff', textAlign: 'center'}}>
-                    Reset Seat
-                  </Text>
-                </TouchableOpacity>
-              </View>
+                }}></View>
             </View>
             <Text
               style={{
@@ -343,7 +358,7 @@ function Order(props) {
                 textAlign: 'center',
                 marginTop: 8,
               }}>
-              CineOne21 Cinema
+              {premiere}
             </Text>
             <Text
               style={{
@@ -352,7 +367,7 @@ function Order(props) {
                 textAlign: 'center',
                 marginTop: 7,
               }}>
-              Spiderman: Homecoming
+              {nameMovie}
             </Text>
             <View style={{marginTop: 26, flexDirection: 'row'}}>
               <Text
@@ -362,7 +377,7 @@ function Order(props) {
                   color: '#6B6B6B',
                   flex: 7,
                 }}>
-                Tuesday, 07 July 2020
+                {date}
               </Text>
               <Text
                 style={{
@@ -371,7 +386,7 @@ function Order(props) {
                   color: '#14142B',
                   flex: 3,
                 }}>
-                02:00PM
+                {time >= 18 ? `${time}pm` : `${time}am`}
               </Text>
             </View>
             <View style={{marginTop: 10, flexDirection: 'row'}}>
@@ -382,7 +397,7 @@ function Order(props) {
                   color: '#6B6B6B',
                   flex: 7,
                 }}>
-                One Ticket Price
+                One ticket price
               </Text>
               <Text
                 style={{
@@ -391,7 +406,14 @@ function Order(props) {
                   color: '#14142B',
                   flex: 3,
                 }}>
-                $10
+                Rp{' '}
+                {premiere === 'Hiflix'
+                  ? new Intl.NumberFormat('id-ID').format('70000')
+                  : premiere === 'Ebv.id'
+                  ? new Intl.NumberFormat('id-ID').format('70000')
+                  : premiere === 'CineOne21'
+                  ? new Intl.NumberFormat('id-ID').format('70000')
+                  : null}
               </Text>
             </View>
             <View style={{marginTop: 10, flexDirection: 'row'}}>
@@ -411,7 +433,23 @@ function Order(props) {
                   color: '#14142B',
                   flex: 3,
                 }}>
-                C1,C2,C3
+                {userSeats.length > 0 ? (
+                  <View>
+                    <IconClose
+                      onPress={ClearSeats}
+                      name="close"
+                      size={20}
+                      color="#14142B"
+                      style={{position: 'absolute', left: -18, top: 2}}
+                    />
+                  </View>
+                ) : null}
+                <Text
+                  style={styles.orderInfo_desc_title_value_seat}
+                  numberOfLines={1}
+                  ellipsizeMode="tail">
+                  {userSeats.length > 0 ? userSeats.join(', ') : '-'}
+                </Text>
               </Text>
             </View>
             <View
@@ -434,19 +472,29 @@ function Order(props) {
               </Text>
               <Text
                 style={{
-                  marginLeft: 20,
-                  fontSize: 24,
+                  marginLeft: 10,
+                  fontSize: 16,
                   color: '#5F2EEA',
                   flex: 3,
                 }}>
-                $30
+                {userSeats.length > 0
+                  ? `Rp${new Intl.NumberFormat('id-ID', {}).format(
+                      premiere === 'Hiflix'
+                        ? userSeats.length * 70000
+                        : premiere === 'Ebv.id'
+                        ? userSeats.length * 70000
+                        : premiere === 'CineOne21'
+                        ? userSeats.length * 70000
+                        : null,
+                    )}`
+                  : '-'}
               </Text>
             </View>
           </View>
           <TouchableOpacity style={styles.buttonCheckout}>
             <Text
               style={{textAlign: 'center', fontSize: 14, color: '#F7F7FC'}}
-              onPress={handlePayment}>
+              onPress={goToCheckout}>
               Checkout now
             </Text>
           </TouchableOpacity>

@@ -9,11 +9,13 @@ import {
   ToastAndroid,
   TouchableHighlight,
 } from 'react-native';
+import DatePicker from 'react-native-date-picker';
 import {Picker} from '@react-native-picker/picker';
 import {getMovieById} from '../../stores/actions/movie';
 import {useDispatch, useSelector} from 'react-redux';
 import {getAllSchedule} from '../../stores/actions/schedule';
 import datetime from '../../assets/calendar.png';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import ebu from '../../assets/ebu.png';
 import tikit from '../../assets/tiket.png';
@@ -236,6 +238,21 @@ function MovieDetail({navigation, value, route}) {
             Show Time and Tickets
           </Text>
           <View>
+            <DatePicker
+              modal
+              open={open}
+              date={date}
+              fadeToColor="black"
+              textColor="black"
+              onConfirm={date => {
+                setOpen(false);
+                chooseDateNow(date);
+                // setDate(date);
+              }}
+              onCancel={() => {
+                setOpen(false);
+              }}
+            />
             <TouchableOpacity
               style={styles.buttonPrimary}
               onPress={() => setOpen(true)}>
@@ -248,7 +265,7 @@ function MovieDetail({navigation, value, route}) {
                 )}
               </Text>
             </TouchableOpacity>
-            {/* <Picker
+            <Picker
               dropdownIconColor="#4E4B66"
               selectedValue={selectedLocation}
               onValueChange={value => {
@@ -265,7 +282,7 @@ function MovieDetail({navigation, value, route}) {
                   key={province.id}
                 />
               ))}
-            </Picker> */}
+            </Picker>
           </View>
           {/* =============schedule============ */}
           <View>
@@ -320,7 +337,7 @@ function MovieDetail({navigation, value, route}) {
                     </Text>
                     <Text
                       style={styles.scheduleDetail_card_time_desc_title_value}>
-                      ${item.price},00/seat
+                      Rp.{item.price}/seat
                     </Text>
                   </View>
 
@@ -330,7 +347,7 @@ function MovieDetail({navigation, value, route}) {
                     onPress={async () =>
                       BookMovieNow({
                         movieId: movie.id,
-                        scheduleId: item.id_schedule,
+                        scheduleId: item.id,
                         premiere: item.premiere,
                         nameMovie: await AsyncStorage.getItem('nameMovie'),
                         date: new Date(date).toDateString(),
@@ -351,6 +368,29 @@ function MovieDetail({navigation, value, route}) {
                 </Text>
               </View>
             )}
+          </View>
+          <View style={styles.schedulePagination_container}>
+            {schedules.length > 0
+              ? newtTotalPage.map(num => (
+                  <TouchableHighlight
+                    style={
+                      ActivePagePagination === num
+                        ? styles.schedulePagination_Active
+                        : styles.schedulePagination_Default
+                    }
+                    underlayColor="none"
+                    onPress={() => changeHandlerPagination(num)}>
+                    <Text
+                      style={
+                        ActivePagePagination === num
+                          ? styles.schedulePagination_title_active
+                          : styles.schedulePagination_title_Default
+                      }>
+                      {num}
+                    </Text>
+                  </TouchableHighlight>
+                ))
+              : null}
           </View>
         </View>
         <View
@@ -452,163 +492,166 @@ const styles = StyleSheet.create({
     backgroundColor: '#5F2EEA',
     borderRadius: 4,
   },
-  // detailHeader: {
-  //   display: 'flex',
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  //   padding: 20,
-  // },
-  // detailHeaderImage: {
-  //   borderWidth: 1,
-  //   padding: 16,
-  //   borderRadius: 4,
-  //   borderColor: '#dedede',
-  //   marginVertical: 20,
-  // },
-  // detailHeaderTitle: {
-  //   marginBottom: 40,
-  // },
-  // detailHeaderTitleJudul: {
-  //   fontWeight: '600',
-  //   fontSize: 20,
-  //   color: '#000',
-  //   textAlign: 'center',
-  // },
-  // detailHeaderTitleGenre: {
-  //   color: '#4e4b66',
-  //   fontSize: 16,
-  //   textAlign: 'center',
-  // },
-  // movieDetailTitle: {
-  //   display: 'flex',
-  //   flexDirection: 'row',
-  //   justifyContent: 'space-between',
-  //   padding: 20,
-  // },
-  // movieDetail: {
-  //   width: 150,
-  // },
-  // detailTextHeader: {
-  //   color: '#8692a6',
-  //   fontSize: 13,
-  // },
-  // detailTextHeaderDesc: {
-  //   color: '#121212',
-  //   fontSize: 16,
-  //   marginBottom: 12,
-  // },
-  // synopsis: {
-  //   marginVertical: 40,
-  //   padding: 20,
-  // },
-  // synopsisHeader: {
-  //   marginBottom: 12,
-  //   color: '#14142b',
-  //   fontSize: 16,
-  //   fontWeight: '600',
-  // },
-  // synopsisDesc: {
-  //   fontSize: 13,
-  //   color: '#4e4b66',
-  // },
-  // scheduleTitle: {
-  //   padding: 20,
-  //   borderRadius: 8,
-  //   marginVertical: 40,
-  //   backgroundColor: '#fff',
-  // },
-  // scheduleHeader: {
-  //   display: 'flex',
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  // },
-  // scheduleHeaderDesc: {
-  //   color: '#aaa',
-  //   fontSize: 13,
-  //   marginBottom: 12,
-  // },
-  // schedule: {
-  //   flexDirection: 'row',
-  //   justifyContent: 'space-around',
-  // },
-  // scheduleBooking: {
-  //   flexDirection: 'row',
-  //   justifyContent: 'space-between',
-  //   marginVertical: 12,
-  // },
-  // schedulePrice: {
-  //   fontSize: 14,
-  //   color: '#6b6b6b',
-  // },
-  // scheduleTime: {
-  //   fontSize: 14,
-  //   color: '#000',
-  //   borderWidth: 1,
-  //   padding: 4,
-  //   borderRadius: 4,
-  // },
-  // scheduleSeat: {
-  //   fontSize: 14,
-  //   color: '#000',
-  //   fontWeight: '600',
-  // },
-  // scheduleButton: {
-  //   backgroundColor: '#5f2eea',
-  //   padding: 12,
-  //   borderRadius: 4,
-  // },
-  // scheduleButtonText: {
-  //   fontSize: 14,
-  //   color: '#fff',
-  //   textAlign: 'center',
-  // },
-  // scheduleDate: {
-  //   display: 'flex',
-  //   justifyContent: 'center',
-  //   // alignItems: 'center',
-  // },
-  // scheduleDateHeader: {
-  //   fontSize: 18,
-  //   color: '#000',
-  //   fontWeight: '700',
-  //   marginBottom: 20,
-  //   textAlign: 'center',
-  // },
-  // buttonDate: {
-  //   borderWidth: 1,
-  //   borderRadius: 4,
-  //   backgroundColor: '#eff0f6',
-  //   marginHorizontal: 60,
-  //   paddingVertical: 10,
-  //   textAlign: 'left',
-  //   borderColor: '#eff0f6',
-  // },
-  // buttonDateText: {
-  //   color: '#4e4b66',
-  //   fontSize: 14,
-  //   paddingLeft: 10,
-  // },
-  // picker: {
-  //   borderWidth: 1,
-  //   borderRadius: 4,
-  //   backgroundColor: '#eff0f6',
-  //   marginHorizontal: 60,
-  //   paddingVertical: 10,
-  //   textAlign: 'left',
-  //   borderColor: '#eff0f6',
-  //   marginTop: 12,
-  // },
-  // pickerItem: {
-  //   color: '#4e4b66',
-  //   fontSize: 14,
-  //   paddingLeft: 10,
-  // },
-  // movieImage: {
-  //   width: 150,
-  //   height: 200,
-  //   resizeMode: 'cover',
-  //   borderRadius: 8,
-  // },
+  scheduleDetail_Container: {
+    marginTop: 96,
+    marginBottom: 48,
+  },
+  scheduleDetail_title: {
+    textAlign: 'center',
+    color: '#000000',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 24,
+  },
+  scheduleDetil_card_image: {
+    resizeMode: 'contain',
+    marginBottom: 5,
+    width: 100,
+    height: 39,
+  },
+  scheduleDetail_card_button_date: {
+    backgroundColor: '#EFF0F6',
+    borderRadius: 16,
+    width: '70%',
+    paddingVertical: 11,
+  },
+  scheduleDetail_card_button_date_title: {
+    color: '#4E4B66',
+    marginHorizontal: 58,
+    fontSize: 14,
+    marginTop: 2,
+    fontWeight: '600',
+  },
+  scheduleDetail_rows: {
+    marginTop: 48,
+  },
+  scheduleDetail_card_container: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  scheduleDetail_card: {
+    backgroundColor: '#FFFFFF',
+    elevation: 8,
+    marginTop: 32,
+    marginHorizontal: 8,
+    marginVertical: 10,
+    borderRadius: 16,
+    paddingVertical: 40,
+    paddingHorizontal: 22,
+  },
+  scheduleDetail_card_address: {
+    textAlign: 'center',
+    marginTop: 12,
+    lineHeight: 22,
+    color: '#AAAAAA',
+    fontSize: 13,
+    fontWeight: '300',
+    letterSpacing: 0.75,
+  },
+  scheduleDetail_card_time: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-start',
+    marginTop: 12,
+  },
+  scheduleDetail_card_time_title: {
+    color: '#4E4B66',
+    fontSize: 12,
+    marginTop: 17,
+    marginHorizontal: 16,
+  },
+  schedule_card_time_title_active: {
+    color: '#FFFFFF',
+    padding: 3,
+    borderRadius: 8,
+    fontWeight: '600',
+    backgroundColor: '#5F2EEA',
+    fontSize: 12,
+    marginTop: 17,
+    marginHorizontal: 10,
+  },
+  scheduleDetail_card_time_title_close: {
+    color: '#A0A3BD',
+    fontSize: 12,
+    marginTop: 8,
+    marginHorizontal: 16,
+  },
+  scheduleDetail_card_time_desc: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 24,
+    marginHorizontal: 16,
+  },
+  sheduleDetail_card_time_desc_title: {
+    color: '#6B6B6B',
+    fontSize: 14,
+    fontWeight: '400',
+  },
+  scheduleDetail_card_time_desc_title_value: {
+    fontWeight: '600',
+    fontSize: 14,
+    color: '#000000',
+  },
+  scheduleDetail_card_button: {
+    backgroundColor: '#5F2EEA',
+    borderRadius: 4,
+    elevation: 4,
+    marginTop: 16,
+    paddingVertical: 11,
+  },
+  scheduleDetail_card_button_title: {
+    textAlign: 'center',
+    color: '#F7F7FC',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  schedulePagination_container: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  schedulePagination_Active: {
+    backgroundColor: '#5F2EEA',
+    borderRadius: 8,
+    elevation: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    marginHorizontal: 5,
+    width: '14%',
+    height: '100%',
+  },
+  schedulePagination_Default: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 0.75,
+    borderColor: '#DEDEDE',
+    borderRadius: 8,
+    elevation: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    width: '14%',
+    height: '100%',
+    marginHorizontal: 8,
+  },
+  schedulePagination_title_Default: {
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: '400',
+    color: '#4E4B66',
+  },
+  schedulePagination_title_active: {
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: '400',
+    color: '#FFFFFF',
+  },
+  ScheduleDetail_card_textNotFound: {
+    marginTop: 20,
+    fontSize: 24,
+    color: '#F4B740',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
 });
 
 export default MovieDetail;

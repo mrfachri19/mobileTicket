@@ -1,110 +1,113 @@
-import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, TouchableHighlight, StyleSheet} from 'react-native';
 
-function Seat(props) {
-  const [leftSideSeat, setLeftSideSeat] = useState([1, 2, 3, 4, 5, 6, 7]);
-  const [rightSideSeat, setRightSideSeat] = useState([
-    8, 9, 10, 11, 12, 13, 14,
-  ]);
+export default function ListSeats({
+  keyAlphabet,
+  selectedSeats,
+  soldSeats,
+  chooseSeats,
+}) {
+  const [leftSeats, setLeftSeats] = useState([1, 2, 3, 4, 5, 6]);
+  const [rightSeats, setRightSeats] = useState([7, 8, 9, 10, 11, 12]);
 
-  useEffect(() => {
-    seatAlphabet();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const seatAlphabet = () => {
-    const {seatAlphabhet} = props;
-    const leftSide = leftSideSeat.map(item => `${seatAlphabhet}${item}`);
-    const rightSide = rightSideSeat.map(item => `${seatAlphabhet}${item}`);
-    setLeftSideSeat(leftSide);
-    setRightSideSeat(rightSide);
+  const seatsListAlphabet = () => {
+    const leftSeatsValue = leftSeats.map(value => `${keyAlphabet}${value}`);
+    const rightSeatsValue = rightSeats.map(value => `${keyAlphabet}${value}`);
+    setLeftSeats(leftSeatsValue);
+    setRightSeats(rightSeatsValue);
   };
 
+  useEffect(() => {
+    seatsListAlphabet();
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <View style={styles.leftSide}>
-        <FlatList
-          horizontal
-          data={leftSideSeat}
-          keyExtractor={item => item}
-          renderItem={({item}) => (
-            <TouchableOpacity
-              style={[
-                styles.seat,
-                props.reserved.includes(item)
-                  ? styles.seatSold
-                  : props.selected.includes(item)
-                  ? styles.seatSelected
-                  : styles.seatAvailable,
-              ]}
-              onPress={() => {
-                props.reserved.includes(item) ? null : props.selectSeat(item);
-              }}
-            />
-          )}
-        />
+    <View style={styles.Seat_ListSeats}>
+      <View style={styles.Seat_ListSeats_column}>
+        {leftSeats.map((num, idx) => (
+          <TouchableHighlight
+            key={idx}
+            underlayColor="none"
+            onPress={() => {
+              soldSeats.includes(num) ? null : chooseSeats(num);
+            }}>
+            <View
+              style={
+                soldSeats.includes(num)
+                  ? styles.Seat_ListSeats_choose_sold
+                  : selectedSeats.includes(num)
+                  ? styles.Seat_ListSeats_choose_selected
+                  : styles.Seat_ListSeats_choose_available
+              }></View>
+          </TouchableHighlight>
+        ))}
       </View>
-      <View style={styles.centerSide} />
-      <View style={styles.rightSide}>
-        <FlatList
-          horizontal
-          data={rightSideSeat}
-          keyExtractor={item => item}
-          renderItem={({item}) => (
-            <TouchableOpacity
-              style={[
-                styles.seat,
-                props.reserved.includes(item)
-                  ? styles.seatSold
-                  : props.selected.includes(item)
-                  ? styles.seatSelected
-                  : styles.seatAvailable,
-              ]}
-              onPress={() => {
-                props.reserved.includes(item) ? null : props.selectSeat(item);
-              }}
-            />
-          )}
-        />
+      <View style={styles.Seat_ListSeats_column_space}></View>
+      <View style={styles.Seat_ListSeats_column}>
+        {rightSeats.map((num, idx) => (
+          <TouchableHighlight
+            key={idx}
+            underlayColor="none"
+            onPress={() => {
+              soldSeats.includes(num) ? null : chooseSeats(num);
+            }}>
+            <View
+              style={
+                soldSeats.includes(num)
+                  ? styles.Seat_ListSeats_choose_sold
+                  : selectedSeats.includes(num)
+                  ? styles.Seat_ListSeats_choose_selected
+                  : styles.Seat_ListSeats_choose_available
+              }></View>
+          </TouchableHighlight>
+        ))}
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginHorizontal: 7,
-    marginVertical: 3,
-    padding: 3,
+  Seat_ListSeats: {
     flexDirection: 'row',
+    width: '100%',
     justifyContent: 'space-between',
   },
-  leftSide: {
-    flex: 6,
+  Seat_ListSeats_column: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
+    width: '53%',
   },
-  rightSide: {
-    flex: 6,
-    flexDirection: 'row',
+  Seat_ListSeats_column_space: {
+    width: '2%',
   },
-  centerSide: {
-    flex: 1,
+  Seat_SeatsContainer: {
+    marginTop: 16,
   },
-  seat: {
-    width: 16,
-    height: 16,
-    borderRadius: 3,
-    marginHorizontal: 2,
+  Seat_ListSeats_choose_available: {
+    backgroundColor: '#D6D8E7',
+    width: 14,
+    height: 14,
+    borderRadius: 2,
+    marginHorizontal: 3,
+    marginTop: 6,
+    marginVertical: 2,
   },
-  seatAvailable: {
-    backgroundColor: '#d6d8e7',
+  Seat_ListSeats_choose_sold: {
+    backgroundColor: '#6E7191',
+    width: 14,
+    height: 14,
+    borderRadius: 2,
+    marginHorizontal: 3,
+    marginTop: 6,
+    marginVertical: 2,
   },
-  seatSelected: {
-    backgroundColor: '#5f2eea',
-  },
-  seatSold: {
-    backgroundColor: '#6e7191',
+  Seat_ListSeats_choose_selected: {
+    backgroundColor: '#5F2EEA',
+    width: 14,
+    height: 14,
+    borderRadius: 2,
+    marginHorizontal: 3,
+    marginTop: 6,
+    marginVertical: 2,
   },
 });
-
-export default Seat;
