@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./screenshoot/tickitz.png" width="300" height="120" />
+<h1>Tickitz-Movies</h1>
   </div>
   
 ## Getting Started
