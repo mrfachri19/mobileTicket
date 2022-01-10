@@ -115,13 +115,6 @@ function AppNavigator() {
           title: 'Profile',
         }}
       />
-      <Drawer.Screen
-        component={PaymentNavigator}
-        name="PaymentNavigator"
-        options={{
-          title: 'Payment',
-        }}
-      />
     </Drawer.Navigator>
   );
 }

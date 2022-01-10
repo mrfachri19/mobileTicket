@@ -40,8 +40,8 @@ function Profile({navigation}) {
   const [users, setUsers] = useState([]);
   const dispatch = useDispatch();
 
-  // akun
   const [firstName, setFirstName] = useState(userInformation.firstName);
+  console.log(firstName);
   const [lastName, setLastName] = useState(userInformation.lastName);
   const [email, setEmail] = useState(userInformation.email);
   const [noTelp, setNotelp] = useState(userInformation.noTelp);

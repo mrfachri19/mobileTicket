@@ -1,4 +1,6 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import axios from '../../utils/axios';
 import {View, Text, Image, StyleSheet, ScrollView} from 'react-native';
 import qrcode from '../../assets/qrcode.png';
 import tikit from '../../assets/tiket.png';
@@ -9,13 +11,27 @@ import yt from '../../assets/yt.png';
 import ig from '../../assets/ig.png';
 import fb from '../../assets/fb.png';
 import twit from '../../assets/twit.png';
+// import QRCode from 'react-native-qrcode-svg';
 
-function TicketResult() {
-  const [text, onChangeText] = React.useState('Jon Don Bosco');
-  const [email, onChangeEmail] = React.useState(
-    'jondonpablopatricio@gmail.com',
-  );
-  const [number, onChangeNumber] = React.useState(null);
+function TicketResult({navigation, route}) {
+  const [dataBooking, setDataBooking] = useState({});
+
+  const getBookingId = async () => {
+    try {
+      const response = await axios.get(
+        `booking/booking-id/${route.params.query}`,
+      );
+      setDataBooking(response.data.data);
+      console.log(response.data.data);
+    } catch (error) {
+      new Error(error.response);
+    }
+  };
+  console.log(dataBooking);
+  useEffect(() => {
+    getBookingId();
+  }, []);
+
   return (
     <>
       <ScrollView style={styles.scrollView}>
@@ -31,6 +47,10 @@ function TicketResult() {
               style={{marginTop: 32, marginHorizontal: 54}}
               source={qrcode}
             />
+            {/* <QRCode
+              value={`https://backend-fachri.fwebdev2.xyz/booking/used-ticket/${route.params.query}`}
+              style={{marginTop: 32, marginHorizontal: 54}}
+            /> */}
             <View
               style={{
                 borderWidth: 0.5,
@@ -52,10 +72,10 @@ function TicketResult() {
             </View>
             <View style={{flexDirection: 'row', paddingLeft: 24}}>
               <Text style={{flex: 6, fontSize: 14, color: '#14142B'}}>
-                Spiderman
+                {dataBooking[0].name}
               </Text>
               <Text style={{flex: 6, fontSize: 14, color: '#14142B'}}>
-                PG-13
+                {dataBooking[0].category}
               </Text>
             </View>
             <View
@@ -69,10 +89,12 @@ function TicketResult() {
             </View>
             <View style={{flexDirection: 'row', paddingLeft: 24}}>
               <Text style={{flex: 6, fontSize: 14, color: '#14142B'}}>
-                2 April 2021
+                {new Date(dataBooking[0].dateBooking).toDateString()}
               </Text>
               <Text style={{flex: 6, fontSize: 14, color: '#14142B'}}>
-                02 PM
+                {dataBooking[0].timeBooking.substring(0, 5) >= 18
+                  ? `${dataBooking[0].timeBooking.substring(0, 5)} pm`
+                  : `${dataBooking[0].timeBooking.substring(0, 5)} am`}
               </Text>
             </View>
             <View
@@ -86,10 +108,10 @@ function TicketResult() {
             </View>
             <View style={{flexDirection: 'row', paddingLeft: 24}}>
               <Text style={{flex: 6, fontSize: 14, color: '#14142B'}}>
-                3 Pcs
+                {dataBooking[0].totalTicket} pcs
               </Text>
               <Text style={{flex: 6, fontSize: 14, color: '#14142B'}}>
-                C1, C2, C4
+                {dataBooking[0].seat.join(', ')}
               </Text>
             </View>
             <View
@@ -105,7 +127,10 @@ function TicketResult() {
                 paddingVertical: 10,
               }}>
               <Text style={{flex: 6}}>Total</Text>
-              <Text style={{flex: 6}}>$30.00</Text>
+              <Text style={{flex: 6}}>
+                Rp.
+                {dataBooking[0].totalPayment}
+              </Text>
             </View>
           </View>
         </View>

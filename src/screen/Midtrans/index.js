@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View} from 'react-native';
+import {View, Text, TouchableHighlight} from 'react-native';
 import {WebView} from 'react-native-webview';
 
 export default function Midtrans({navigation, route}) {

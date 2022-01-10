@@ -60,7 +60,7 @@ function Home({navigation}) {
   };
   const searchAllMovie = async () => {
     try {
-      const response = await axios.get(`movie?searchName=${search}`);
+      const response = await axios.get(`movie?search=${search}`);
       setMovies(response.data.data);
     } catch (error) {
       setMovies([]);
@@ -108,11 +108,9 @@ function Home({navigation}) {
             onRequestClose={() => {
               setShowModalViewAll(!showModalViewAll);
             }}>
-            <View style={styles.homeRows_modalMain}>
-              <View style={styles.homeRows_modalMainHeader}>
-                <Text style={styles.homeRows_modalMainText}>
-                  List All Movie
-                </Text>
+            <View style={styles.modal_home}>
+              <View style={styles.modal_homeHeader}>
+                <Text style={styles.modal_homeText}>List All Movie</Text>
                 <Icon
                   name="close"
                   size={20}
@@ -147,10 +145,7 @@ function Home({navigation}) {
                   <Icon name="search" size={20} color="#FFFFFF" />
                 </Pressable>
               </View>
-              <ScrollView
-                contentContainerStyle={
-                  styles.homeRows_listmovie_column_card_modal
-                }>
+              <ScrollView contentContainerStyle={styles.movie_list}>
                 {movies.length > 0 ? (
                   movies.map(value => (
                     <View
@@ -168,7 +163,7 @@ function Home({navigation}) {
                             source={{
                               uri: `https://backend-fachri.fwebdev2.xyz/uploads/movie/${value.image}`,
                             }}
-                            style={styles.homeRows_listmovie_card_image}
+                            style={styles.listmoviescard_image}
                           />
                           {selectHoverMovie === value.id && (
                             <View
@@ -176,17 +171,12 @@ function Home({navigation}) {
                                 flexDirection: 'column',
                               }}>
                               <Text
-                                style={
-                                  styles.homeRows_listMovie_card_hover_title_movie
-                                }
+                                style={styles.movie_list_hovermovie}
                                 numberOfLines={1}
                                 ellipsizeMode="tail">
                                 {value.name}
                               </Text>
-                              <Text
-                                style={
-                                  styles.homeRows_listMovie_card_hover_title_category
-                                }>
+                              <Text style={styles.movie_list_hovercategory}>
                                 {value.category}
                               </Text>
                               <TouchableHighlight
@@ -233,11 +223,11 @@ function Home({navigation}) {
             </View>
           </Modal>
 
-          <View style={styles.homeRows_listmovie}>
+          <View style={styles.home_listmovie}>
             <View>
               <FlatList
                 horizontal
-                contentContainerStyle={styles.homeRows_listmovie_column_card}
+                contentContainerStyle={styles.listmoviescolumn_card}
                 data={movies}
                 renderItem={({item: value}) => (
                   <Card index={value.id} key={value.id}>
@@ -252,7 +242,7 @@ function Home({navigation}) {
                           source={{
                             uri: `https://backend-fachri.fwebdev2.xyz/uploads/movie/${value.image}`,
                           }}
-                          style={styles.homeRows_listmovie_card_image}
+                          style={styles.listmoviescard_image}
                         />
                         {selectHoverMovie === value.id && (
                           <View
@@ -260,17 +250,12 @@ function Home({navigation}) {
                               flexDirection: 'column',
                             }}>
                             <Text
-                              style={
-                                styles.homeRows_listMovie_card_hover_title_movie
-                              }
+                              style={styles.movie_list_hovermovie}
                               numberOfLines={1}
                               ellipsizeMode="tail">
                               {value.name}
                             </Text>
-                            <Text
-                              style={
-                                styles.homeRows_listMovie_card_hover_title_category
-                              }>
+                            <Text style={styles.movie_list_hovercategory}>
                               {value.category}
                             </Text>
                             <TouchableHighlight
@@ -335,23 +320,64 @@ function Home({navigation}) {
               <View>
                 <FlatList
                   horizontal
-                  data={movie}
-                  renderItem={({item}) => (
-                    <View style={styles.card}>
-                      <Image
-                        style={styles.cardImage}
-                        source={{
-                          uri: `https://backend-fachri.fwebdev2.xyz/uploads/movie/${item.image}`,
-                        }}
-                      />
-                      <Text style={styles.title}>{item.name}</Text>
-                      <Text style={styles.tagline}>{item.category}</Text>
-                      <TouchableHighlight style={styles.buttondetail}>
-                        <Text style={styles.textdetail}>Detail</Text>
+                  contentContainerStyle={styles.listmoviescolumn_card}
+                  data={movies}
+                  renderItem={({item: value}) => (
+                    <Card index={value.id} key={value.id}>
+                      <TouchableHighlight
+                        underlayColor="none"
+                        onPress={() => showDescriptionMovie(value.id)}>
+                        <View
+                          style={{
+                            height: selectHoverMovie === value.id ? 320 : 220,
+                          }}>
+                          <Image
+                            source={{
+                              uri: `https://backend-fachri.fwebdev2.xyz/uploads/movie/${value.image}`,
+                            }}
+                            style={styles.listmoviescard_image}
+                          />
+                          {selectHoverMovie === value.id && (
+                            <View
+                              style={{
+                                flexDirection: 'column',
+                              }}>
+                              <Text
+                                style={styles.movie_list_hovermovie}
+                                numberOfLines={1}
+                                ellipsizeMode="tail">
+                                {value.name}
+                              </Text>
+                              <Text style={styles.movie_list_hovercategory}>
+                                {value.category}
+                              </Text>
+                              <TouchableHighlight
+                                underlayColor="none"
+                                style={{
+                                  borderColor: '#5F2EEA',
+                                  borderWidth: 0.5,
+                                  borderStyle: 'solid',
+                                  paddingVertical: 5,
+                                  paddingHorizontal: 40,
+                                  marginTop: 33,
+                                  borderRadius: 4,
+                                }}
+                                onPress={() => handleMovieDetail(value)}>
+                                <Text
+                                  style={{
+                                    color: '#5F2EEA',
+                                    fontWeight: '300',
+                                    fontSize: 10,
+                                  }}>
+                                  Details
+                                </Text>
+                              </TouchableHighlight>
+                            </View>
+                          )}
+                        </View>
                       </TouchableHighlight>
-                    </View>
+                    </Card>
                   )}
-                  keyExtractor={item => item.id}
                 />
               </View>
             </ScrollView>
@@ -556,37 +582,37 @@ const styles = StyleSheet.create({
     height: 185,
   },
   // =================
-  homeRows_listmovie_column: {
+  listmoviescolumn: {
     marginTop: 215,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  homeRows_listmovie_column_title: {
+  listmoviescolumn_title: {
     fontSize: 18,
     fontWeight: '500',
     color: '#14142B',
   },
-  homeRows_listmovie_column_ShowAll: {
+  listmoviescolumn_ShowAll: {
     color: '#5F2EEA',
     fontWeight: '600',
     fontSize: 14,
   },
-  homeRows_listmovie_column_card: {
+  listmoviescolumn_card: {
     flexDirection: 'row',
   },
-  homeRows_listmovie_column_card_modal: {
+  movie_list: {
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
-  homeRows_listmovie_card_image: {
+  listmoviescard_image: {
     resizeMode: 'contain',
     borderRadius: 24,
     width: 122,
     height: 205,
   },
 
-  homeRows_SubscribeMain: {
+  homeborderSubscribeMain: {
     flexDirection: 'column',
     alignItems: 'center',
     backgroundColor: '#ffffff',
@@ -594,18 +620,18 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginTop: 70,
   },
-  homeRows_Subscribe_title: {
+  homeborderSubscribe_title: {
     fontSize: 14,
     color: '#4E4B66',
     fontWeight: '400',
     marginTop: 48,
   },
-  homeRows_Subscribe_title_active: {
+  homeborderSubscribe_title_active: {
     fontSize: 32,
     color: '#5F2EEA',
     fontWeight: '600',
   },
-  homeRows_Subscribe_input: {
+  homeborderSubscribe_input: {
     borderRadius: 12,
     borderWidth: 1,
     borderStyle: 'solid',
@@ -616,7 +642,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 24,
   },
-  homeRows_listMovie_card_hover_title_movie: {
+  movieshovermovie: {
     color: '#14142B',
     fontSize: 14,
     width: 120,
@@ -624,29 +650,29 @@ const styles = StyleSheet.create({
     marginTop: 12,
     fontWeight: '600',
   },
-  homeRows_listMovie_card_hover_title_category: {
+  movieshovercategory: {
     color: '#A0A3BD',
     fontSize: 11,
     textAlign: 'center',
     marginTop: 4,
   },
-  homeRows_modalMain: {
+  modal_home: {
     flex: 1,
     backgroundColor: '#FCFCFC',
     paddingVertical: 24,
     paddingHorizontal: 24,
   },
-  homeRows_modalMainHeader: {
+  modal_homeHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  homeRows_modalMainText: {
+  modal_homeText: {
     fontSize: 18,
     fontWeight: '700',
     color: '#14142B',
   },
-  homeRows_modalCard: {
+  homebordermodalCard: {
     borderRadius: 16,
     backgroundColor: '#ffffff',
     borderWidth: 0.5,

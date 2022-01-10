@@ -44,6 +44,7 @@ function Payment({navigation, route}) {
   console.log(detailOrder);
 
   const [userAlreadyBooking, setUserAlreadyBooking] = useState('');
+  console.log(userAlreadyBooking);
 
   const PopUpTransferPayment = paymentMethod => {
     setPaymentMethod(paymentMethod);
@@ -69,14 +70,14 @@ function Payment({navigation, route}) {
         seat,
         timeBooking,
         dateBooking,
-        paymentMethod: '',
+        paymentMethod: 'midtrans',
       };
 
       const response = await axios.post('seat/', setDataBooking);
       setUserAlreadyBooking('ready');
 
       return navigation.navigate('Midtrans', {
-        redirectUrl: response.data.data.redirect_url,
+        redirectUrl: response.data.data.urlRedirect,
       });
     } catch (error) {
       new Error(error.resposne);
@@ -91,10 +92,6 @@ function Payment({navigation, route}) {
     dispatch(getUser());
   }, []);
 
-  // console.log(userAlreadyBooking);
-  // const handleTicketResult = () => {
-  //   props.navigation.navigate('TicketResult');
-  // };
   return (
     <>
       <View

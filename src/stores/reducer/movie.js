@@ -1,5 +1,5 @@
 const initialState = {
-  movie: {},
+  movies: [],
   msg: '',
 };
 
