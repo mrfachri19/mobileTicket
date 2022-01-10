@@ -29,7 +29,6 @@ BASE_URL=yourApiBaseUrl
 - [NodeJs] - Runtime Javascript environment for the backend
 - [React Native] - UI Library for cross platform
 - [Redux] - state management global
-- [Vercel] - Hosting for production
 - etc.
 
 ## Demo
