@@ -12,7 +12,7 @@ import axios from '../../utils/axios';
 import {getUser, setDataTicketBooking} from '../../stores/actions/user';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
-import Notification from '../Notification/notif';
+import Notification from '../Notification/index';
 export default function Profile({navigation}) {
   const user = useSelector(state => state.user);
   const userInformation = user.users[0];

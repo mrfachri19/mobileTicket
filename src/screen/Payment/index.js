@@ -116,16 +116,16 @@ function Payment({navigation, route}) {
           <Text style={{marginTop: 40, fontSize: 18, color: '#14142B'}}>
             Payment Method
           </Text>
-          <View style={styles.payment_card_method}>
+          <View style={styles.methodpayment}>
             {selectedMidtrans !== 'midtrans' ? (
               <>
-                <View style={styles.payment_card_method_body}>
+                <View style={styles.methodpayment_body}>
                   <Pressable onPress={() => PopUpTransferPayment('Gopay')}>
                     <View
                       style={
                         paymentMethod === 'Gopay'
-                          ? styles.payment_card_method_body_border_active
-                          : styles.payment_card_method_body_border
+                          ? styles.methodpayment_body_border_active
+                          : styles.methodpayment_body_border
                       }>
                       <Image source={gopay} />
                     </View>
@@ -134,8 +134,8 @@ function Payment({navigation, route}) {
                     <View
                       style={
                         paymentMethod === 'Ovo'
-                          ? styles.payment_card_method_body_border_active
-                          : styles.payment_card_method_body_border
+                          ? styles.methodpayment_body_border_active
+                          : styles.methodpayment_body_border
                       }>
                       <Image source={ovo} />
                     </View>
@@ -144,8 +144,8 @@ function Payment({navigation, route}) {
                     <View
                       style={
                         paymentMethod === 'Paypal'
-                          ? styles.payment_card_method_body_border_active
-                          : styles.payment_card_method_body_border
+                          ? styles.methodpayment_body_border_active
+                          : styles.methodpayment_body_border
                       }>
                       <Image source={paypal} />
                     </View>
@@ -154,8 +154,8 @@ function Payment({navigation, route}) {
                     <View
                       style={
                         paymentMethod === 'GooglePay'
-                          ? styles.payment_card_method_body_border_active
-                          : styles.payment_card_method_body_border
+                          ? styles.methodpayment_body_border_active
+                          : styles.methodpayment_body_border
                       }>
                       <Image source={gpay} />
                     </View>
@@ -164,8 +164,8 @@ function Payment({navigation, route}) {
                     <View
                       style={
                         paymentMethod === 'BCA'
-                          ? styles.payment_card_method_body_border_active
-                          : styles.payment_card_method_body_border
+                          ? styles.methodpayment_body_border_active
+                          : styles.methodpayment_body_border
                       }>
                       <Image source={visa} />
                     </View>
@@ -174,8 +174,8 @@ function Payment({navigation, route}) {
                     <View
                       style={
                         paymentMethod === 'BRI'
-                          ? styles.payment_card_method_body_border_active
-                          : styles.payment_card_method_body_border
+                          ? styles.methodpayment_body_border_active
+                          : styles.methodpayment_body_border
                       }>
                       <Image source={dana} />
                     </View>
@@ -188,13 +188,11 @@ function Payment({navigation, route}) {
                     justifyContent: 'center',
                     marginTop: 36,
                   }}>
-                  <View style={styles.payment_card_method_question_line}></View>
+                  <View style={styles.methodpayment_question_line}></View>
                   <View>
-                    <Text style={styles.payment_card_method_question_title}>
-                      or
-                    </Text>
+                    <Text style={styles.methodpayment_question_title}>or</Text>
                   </View>
-                  <View style={styles.payment_card_method_question_line}></View>
+                  <View style={styles.methodpayment_question_line}></View>
                 </View>
               </>
             ) : null}
@@ -202,22 +200,22 @@ function Payment({navigation, route}) {
             <View
               style={
                 selectedMidtrans === 'midtrans'
-                  ? styles.payment_card_method_viaMidtrans_selected
-                  : styles.payment_card_method_viaMidtrans
+                  ? styles.methodpayment_midtrans_selected
+                  : styles.methodpayment_midtrans
               }>
               <Text
                 style={
                   selectedMidtrans === 'midtrans'
-                    ? styles.payment_card_method_title_viaMidtrans_active_selected
-                    : styles.payment_card_method_title_viaMidtrans
+                    ? styles.methodpayment_title_midtrans_active_selected
+                    : styles.methodpayment_title_midtrans
                 }
                 onPress={() => selectedPaymentMidtrans('midtrans')}>
-                Midtrans Payment
+                Pay By Midtrans
               </Text>
             </View>
             {selectedMidtrans === 'midtrans' ? (
               <Text
-                style={styles.payment_card_method_title_viaMidtrans_cancel}
+                style={styles.methodpayment_title_midtrans_cancel}
                 onPress={cancelSelectedPaymentMidtrans}>
                 Cancel
               </Text>
@@ -229,67 +227,15 @@ function Payment({navigation, route}) {
                 justifyContent: 'center',
                 marginTop: 36,
               }}>
-              <Text style={styles.payment_card_method_title_viaCash}>
+              <Text style={styles.methodpayment_title_viaCash}>
                 Pay via cash.
               </Text>
-              <Text style={styles.payment_card_method_title_viaCash_active}>
+              <Text style={styles.methodpayment_title_viaCash_active}>
                 See how it work
               </Text>
             </View>
           </View>
-          <View
-            style={{
-              backgroundColor: 'white',
-              height: 242,
-              borderRadius: 16,
-              marginTop: 16,
-            }}>
-            <View style={{flexDirection: 'row', marginTop: 2}}>
-              <TouchableOpacity style={styles.buttondetail}>
-                <Image source={ovo} />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.buttondetail}>
-                <Image source={gopay} />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.buttondetail}>
-                <Image source={gpay} />
-              </TouchableOpacity>
-            </View>
-            <View style={{flexDirection: 'row'}}>
-              <TouchableOpacity style={styles.buttondetail}>
-                <Image source={paypal} />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.buttondetail}>
-                <Image source={dana} />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.buttondetail}>
-                <Image source={visa} />
-              </TouchableOpacity>
-            </View>
-            <View
-              style={{
-                borderWidth: 0.5,
-                borderColor: '#DEDEDE',
-                marginLeft: 24,
-                marginRight: 24,
-                width: 260,
-                marginTop: 36,
-              }}
-            />
-            <View
-              style={{
-                flexDirection: 'row',
-                marginTop: 24,
-                marginLeft: 56,
-              }}>
-              <Text style={{fontSize: 14, color: '#AAAAAA'}}>
-                Pay via cash.
-              </Text>
-              <Text style={{fontSize: 14, color: '#5F2EEA'}}>
-                See how it work
-              </Text>
-            </View>
-          </View>
+
           <Text style={{marginTop: 40, fontSize: 18, color: '#14142B'}}>
             Personal Info
           </Text>
@@ -473,7 +419,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: '#EFF0F6',
   },
-  payment_header_total: {
+  paymentborder: {
     backgroundColor: '#FFFFFF',
     borderBottomLeftRadius: 16,
     borderBottomRightRadius: 16,
@@ -481,7 +427,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  payment_header_total_title: {
+  paymentborder_title: {
     marginHorizontal: 24,
     color: '#AAAAAA',
     fontSize: 16,
@@ -491,7 +437,7 @@ const styles = StyleSheet.create({
   payment_method_container: {
     marginTop: 40,
   },
-  payment_header_total_title_price: {
+  paymentborder_title_price: {
     marginHorizontal: 24,
     marginTop: 18,
     marginBottom: 18,
@@ -504,23 +450,23 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 18,
   },
-  payment_card_method: {
+  methodpayment: {
     marginTop: 16,
     paddingVertical: 32,
     paddingHorizontal: 18,
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
   },
-  payment_card_method_body: {
+  methodpayment_body: {
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
-  payment_card_method_image: {
+  methodpayment_image: {
     width: 50,
     height: 16,
     resizeMode: 'contain',
   },
-  payment_card_method_body_border: {
+  methodpayment_body_border: {
     borderWidth: 0.5,
     borderStyle: 'solid',
     marginTop: 16,
@@ -530,7 +476,7 @@ const styles = StyleSheet.create({
     paddingVertical: 9,
     marginHorizontal: 5,
   },
-  payment_card_method_body_border_active: {
+  methodpayment_body_border_active: {
     borderWidth: 1,
     borderStyle: 'solid',
     marginTop: 16,
@@ -541,46 +487,46 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
 
-  payment_card_method_question_title: {
+  methodpayment_question_title: {
     color: '#A0A3BD',
     fontSize: 14,
     marginHorizontal: 41,
   },
-  payment_card_method_question_line: {
+  methodpayment_question_line: {
     backgroundColor: '#DEDEDE',
     height: 1,
     marginTop: 10,
     width: '30%',
   },
-  payment_card_method_title_viaCash: {
+  methodpayment_title_viaCash: {
     color: '#6E7191',
     fontSize: 14,
   },
-  payment_card_method_title_viaCash_active: {
+  methodpayment_title_viaCash_active: {
     color: '#5F2EEA',
     fontSize: 14,
     marginHorizontal: 5,
   },
-  payment_card_method_title_viaMidtrans_active_selected: {
+  methodpayment_title_midtrans_active_selected: {
     color: '#FFFFFF',
     fontSize: 14,
     marginHorizontal: 5,
   },
-  payment_card_method_viaMidtrans_selected: {
+  methodpayment_midtrans_selected: {
     padding: 4,
     backgroundColor: '#5F2EEA',
     borderRadius: 4,
     width: '50%',
     marginHorizontal: 70,
   },
-  payment_card_method_title_viaMidtrans: {
+  methodpayment_title_midtrans: {
     color: '#5F2EEA',
     fontSize: 14,
     marginTop: 10,
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  payment_card_method_title_viaMidtrans_cancel: {
+  methodpayment_title_midtrans_cancel: {
     fontWeight: 'bold',
     color: '#000000',
     marginTop: 10,
