@@ -24,9 +24,9 @@ import twit from '../../assets/twit.png';
 import {useState} from 'react/cjs/react.development';
 import axios from '../../utils/axios';
 import {getUser} from '../../stores/actions/user';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import Toast from 'react-native-simple-toast';
 
 function Profile({navigation}) {
   const [formImage, setFormImage] = useState({
@@ -39,12 +39,20 @@ function Profile({navigation}) {
   const userInformation = user.users[0];
   const [users, setUsers] = useState([]);
   const dispatch = useDispatch();
-
-  const [firstName, setFirstName] = useState(userInformation.firstName);
+  const [firstName, setFirstName] = useState('');
   console.log(firstName);
-  const [lastName, setLastName] = useState(userInformation.lastName);
-  const [email, setEmail] = useState(userInformation.email);
-  const [noTelp, setNotelp] = useState(userInformation.noTelp);
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [noTelp, setNotelp] = useState('');
+
+  useEffect(() => {
+    if (userInformation) {
+      setFirstName(userInformation.firstName);
+      setLastName(userInformation.lastName);
+      setEmail(userInformation.email);
+      setNotelp(userInformation.noTelp);
+    }
+  }, [userInformation]);
 
   const updateDetailInformation = async () => {
     try {
@@ -81,11 +89,11 @@ function Profile({navigation}) {
       );
       setNewPassword('');
       setConfirmPassword('');
-      setSelectOptionUpdate('');
+      Toast.show(response.data.msg);
     } catch (error) {
       setErrorPassword(true);
       setMessagePassword(error.response.data.message);
-      console.log(error.response);
+      Toast.show(error.response.data.msg);
     }
   };
 
@@ -351,6 +359,9 @@ function Profile({navigation}) {
               <Text style={styles.profile_card_body_information_title_job}>
                 {users.noTelp}
               </Text>
+              <Text style={styles.profile_card_body_information_title_job}>
+                {users.password}
+              </Text>
             </View>
           </View>
           <Text
@@ -366,13 +377,13 @@ function Profile({navigation}) {
             style={{
               backgroundColor: '#FFFFFF',
               width: 310,
-              height: 479,
+              height: 489,
               borderRadius: 24,
               paddingLeft: 24,
             }}>
             <Text
               style={{
-                marginTop: 40,
+                marginTop: 20,
                 fontSize: 16,
                 color: '#14142B',
               }}>
@@ -492,8 +503,7 @@ function Profile({navigation}) {
             </Text>
             <TextInput
               style={styles.input}
-              onChangeText={text => handleInputPassword(text, 'newPassword')}
-              secureTextEntry={true}
+              onChangeText={text => setNewPassword(text, 'newPassword')}
               placeholder="Enter New Password"
             />
             <Text
@@ -507,10 +517,7 @@ function Profile({navigation}) {
             </Text>
             <TextInput
               style={styles.input}
-              onChangeText={text =>
-                handleInputPassword(text, 'confirmPassword')
-              }
-              secureTextEntry={true}
+              onChangeText={text => setConfirmPassword(text, 'confirmPassword')}
               placeholder="Enter Confirm Password"
             />
           </View>

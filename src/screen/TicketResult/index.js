@@ -14,7 +14,17 @@ import twit from '../../assets/twit.png';
 // import QRCode from 'react-native-qrcode-svg';
 
 function TicketResult({navigation, route}) {
-  const [dataBooking, setDataBooking] = useState({});
+  const [dataBooking, setDataBooking] = useState([
+    {
+      name: '',
+      category: '',
+      dateBooking: '',
+      timeBooking: '',
+      totalTicket: '',
+      seat: [],
+      totalPayment: '',
+    },
+  ]);
 
   const getBookingId = async () => {
     try {
