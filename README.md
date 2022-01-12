@@ -5,7 +5,7 @@
 ## Getting Started
   Tickitz-Movies is an application that can help you to order movies, Tickitz-Movies is very friendly UX and beutiful UI.
 
-Link APLIKASI [https://drive.google.com/file/d/1P4xxwvN-xMMQMRYSN5ae82DpecCQNZI5/view?usp=sharing]
+Link Tikitz-Movies App [https://drive.google.com/file/d/1P4xxwvN-xMMQMRYSN5ae82DpecCQNZI5/view?usp=sharing]
 
 ## Installation
 
